@@ -17,9 +17,9 @@ type AttendanceTableProps = {
 
 const AttendanceTable: React.FC<AttendanceTableProps> = ({ employeeData }) => {
   return (
-    <div className='flex gap-4'>
+    <div className='flex gap-4 flex-wrap'>
       {employeeData.map(({ name, timeEntries, summary }: EmployeeData) => (
-        <div key={name} className='w-full mb-5 border p-4 rounded shadow'>
+        <div key={name} className='w-[calc(50%-0.5rem)] border p-4 rounded shadow'>
           <h3 className='mb-2 text-lg font-semibold'>{name}</h3>
           <div className='flex gap-4'>
             <Table className='w-full border-collapse border'>
