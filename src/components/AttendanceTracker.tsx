@@ -202,7 +202,9 @@ const AttendanceTracker = () => {
           </Card>
         </div>
 
-        {isAttendanceTableVisible && <AttendanceTable employeeData={employeeData} />}
+        {isAttendanceTableVisible && (
+          <AttendanceTable holidays={holidays} employeeData={employeeData} />
+        )}
 
         {showHolidaySelection && (
           <HolidaySelection

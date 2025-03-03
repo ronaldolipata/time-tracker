@@ -17,10 +17,32 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { EmployeeData } from '@/types/EmployeeData';
+import { TimeEntry } from '@/types/EmployeeData';
 import { isSunday } from 'date-fns';
+import Holidays from '@/types/Holidays';
+import { isRegularHoliday } from '@/helpers/holidayHelper';
 
-const AttendanceTableDialog: React.FC<EmployeeData> = ({ name, timeEntries }: EmployeeData) => {
+type AttendanceTableDialogProps = {
+  holidays: Holidays;
+  name: string;
+  timeEntries: TimeEntry[];
+};
+
+const AttendanceTableDialog: React.FC<AttendanceTableDialogProps> = ({
+  holidays,
+  name,
+  timeEntries,
+}) => {
+  const getBackgroundColor = (entry: TimeEntry) => {
+    if (isSunday(new Date(entry.date))) {
+      return 'bg-red-200';
+    } else if (isRegularHoliday(entry.date, holidays)) {
+      return 'bg-blue-200';
+    } else {
+      return '';
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -30,22 +52,22 @@ const AttendanceTableDialog: React.FC<EmployeeData> = ({ name, timeEntries }: Em
       </DialogTrigger>
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle>{name}</DialogTitle>
+          <DialogTitle className='font-bold text-blue-900'>{name}</DialogTitle>
         </DialogHeader>
-        <Table className='w-full border-collapse border'>
+        <Table className='w-full border-collapse border text-center'>
           <TableHeader>
             <TableRow className='uppercase bg-gray-300'>
-              <TableHead>Date</TableHead>
-              <TableHead>Time In</TableHead>
-              <TableHead>Time Out</TableHead>
+              <TableHead className='text-center'>Date</TableHead>
+              <TableHead className='text-center'>Time In</TableHead>
+              <TableHead className='text-center'>Time Out</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {timeEntries.map((entry, index) => (
-              <TableRow className={isSunday(new Date(entry.date)) ? 'bg-red-200' : ''} key={index}>
-                <TableCell>{entry.date}</TableCell>
-                <TableCell>{entry.timeIn}</TableCell>
-                <TableCell>{entry.timeOut}</TableCell>
+              <TableRow className={getBackgroundColor(entry)} key={index}>
+                <TableCell className='border p-2'>{entry.date}</TableCell>
+                <TableCell className='border p-2'>{entry.timeIn}</TableCell>
+                <TableCell className='border p-2'>{entry.timeOut}</TableCell>
               </TableRow>
             ))}
           </TableBody>

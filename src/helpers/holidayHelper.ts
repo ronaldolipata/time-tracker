@@ -11,3 +11,7 @@ export const calculateRegularHoliday = (timeEntries: TimeEntry[], holidays: Holi
     return total + (isRegularHoliday ? 2 : 1);
   }, 0);
 };
+
+export const isRegularHoliday = (date: string, holidays: Holidays): boolean => {
+  return holidays.regular.dates.has(date);
+};
