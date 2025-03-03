@@ -3,12 +3,14 @@ import { EmployeeData } from '../types/EmployeeData';
 import { Card } from './ui/card';
 import addEllipsis from '@/helpers/addEllipsis';
 import AttendanceTableDialog from './AttendanceTableDialog';
+import Holidays from '@/types/Holidays';
 
 type AttendanceTableProps = {
+  holidays: Holidays;
   employeeData: EmployeeData[];
 };
 
-const AttendanceTable: React.FC<AttendanceTableProps> = ({ employeeData }) => {
+const AttendanceTable: React.FC<AttendanceTableProps> = ({ holidays, employeeData }) => {
   return (
     <div className='flex flex-wrap gap-4'>
       {employeeData.map(({ name, timeEntries, summary }: EmployeeData) => (
@@ -42,7 +44,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ employeeData }) => {
               </p>
             </div>
 
-            <AttendanceTableDialog name={name} timeEntries={timeEntries} summary={summary} />
+            <AttendanceTableDialog holidays={holidays} name={name} timeEntries={timeEntries} />
           </div>
         </Card>
       ))}

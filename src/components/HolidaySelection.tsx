@@ -62,6 +62,7 @@ const HolidaySelection: React.FC<DateSelectionProps> = ({
   const handleSetShowTimeEntries = (): void => {
     setIsTimeEntriesEnabled(true);
     setShowHolidaySelection(false);
+    console.log(holidays);
   };
 
   return (
