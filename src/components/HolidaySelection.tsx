@@ -16,7 +16,7 @@ type DateSelectionProps = {
   holidays: Holidays;
   setHolidays: React.Dispatch<React.SetStateAction<Holidays>>;
   dates: string[];
-  setShowTimeEntries: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsTimeEntriesEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setShowHolidaySelection: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -24,7 +24,7 @@ const HolidaySelection: React.FC<DateSelectionProps> = ({
   holidays,
   setHolidays,
   dates,
-  setShowTimeEntries,
+  setIsTimeEntriesEnabled,
   setShowHolidaySelection,
 }) => {
   const handleHolidayCheckboxChange = (date: string, type: keyof Holidays): void => {
@@ -60,7 +60,7 @@ const HolidaySelection: React.FC<DateSelectionProps> = ({
   };
 
   const handleSetShowTimeEntries = (): void => {
-    setShowTimeEntries(true);
+    setIsTimeEntriesEnabled(true);
     setShowHolidaySelection(false);
   };
 
@@ -108,7 +108,10 @@ const HolidaySelection: React.FC<DateSelectionProps> = ({
         </TableBody>
       </Table>
 
-      <Button className='self-end mt-4' onClick={handleSetShowTimeEntries}>
+      <Button
+        className='self-end mt-4 focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
+        onClick={handleSetShowTimeEntries}
+      >
         Proceed to Input Time In and Time Out
       </Button>
     </div>

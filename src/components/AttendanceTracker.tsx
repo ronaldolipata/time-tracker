@@ -13,18 +13,16 @@ import HolidaySelection from './HolidaySelection';
 import { Button } from '@/components/ui/button';
 import Holidays from '@/types/Holidays';
 import { Input } from './ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card } from './ui/card';
 
 const AttendanceTracker = () => {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [dates, setDates] = useState<string[]>([]);
-  const [showHolidaySelection, setShowHolidaySelection] = useState(false);
-
-  const [showTimeEntries, setShowTimeEntries] = useState(false);
+  const [showHolidaySelection, setShowHolidaySelection] = useState<boolean>(false);
   const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
-  const [showAttendanceTables, setAttendanceShowTables] = useState(false);
+  const [isTimeEntriesEnabled, setIsTimeEntriesEnabled] = useState<boolean>(false);
+  const [isAttendanceTableVisible, setIsAttendanceTableVisible] = useState<boolean>(false);
 
   const [holidays, setHolidays] = useState<Holidays>({
     regular: { dates: new Set() },
@@ -45,8 +43,8 @@ const AttendanceTracker = () => {
       const end = new Date(endDate);
       setDates(getDatesInRange(start, end));
       setShowHolidaySelection(true);
-      setAttendanceShowTables(false);
-      setShowTimeEntries(false);
+      setIsAttendanceTableVisible(false);
+      setIsTimeEntriesEnabled(false);
     }
   };
 
@@ -99,12 +97,12 @@ const AttendanceTracker = () => {
       });
   };
 
-  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
     event.preventDefault();
     const pastedText = event.clipboardData.getData('Text');
     const newEmployeeData = processPastedData(pastedText);
     setEmployeeData(newEmployeeData);
-    setAttendanceShowTables(true);
+    setIsAttendanceTableVisible(true);
     notifySuccess();
   };
 
@@ -140,61 +138,78 @@ const AttendanceTracker = () => {
     <>
       <ToastContainer />
 
-      <div className='flex flex-col gap-4 p-4'>
+      <div className='flex flex-col gap-4 py-4'>
         <h2 className='text-xl font-bold'>Time Tracker</h2>
 
-        <div className='flex gap-4'>
-          <Card className='flex flex-row gap-4 items-center self-start px-4'>
-            <div>
-              <label className='block mb-2'>Start Date:</label>
+        <div className='flex flex-wrap gap-4'>
+          <Card className='w-full lg:w-auto flex flex-col md:flex-row flex-wrap gap-4 md:items-end md:justify-center lg:justify-start self-start p-4 text-center lg:text-left'>
+            <div className='flex flex-col gap-2'>
+              <label>Start Date:</label>
               <Input
+                className='flex justify-center'
                 type='date'
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className='min-h-8 border p-2'
               />
             </div>
-            <div>
-              <label className='block mb-2'>End Date:</label>
+            <div className='flex flex-col gap-2'>
+              <label>End Date:</label>
               <Input
+                className='flex justify-center'
                 type='date'
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className='min-h-8 border p-2'
               />
             </div>
-            <Button className='self-end' onClick={handleApplyDates}>
+            <Button
+              className='focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
+              onClick={handleApplyDates}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleApplyDates();
+                }
+              }}
+            >
               Apply
             </Button>
           </Card>
 
-          {showTimeEntries && (
-            <Card className='gap-0 grow-1 px-4'>
-              <h2 className='mb-2'>Time Entries</h2>
-              <Textarea
-                className='min-h-8 border p-2 w-full'
-                placeholder='Paste time in, and time out data here...'
-                onPaste={handlePaste}
-              />
-            </Card>
-          )}
+          <Card className='min-w-[189px] gap-2 grow-1 p-4'>
+            <h2>Time Entries</h2>
+            <Input
+              type='text'
+              className={`min-h-8 border p-2 w-full ${
+                isTimeEntriesEnabled ? 'cursor-pointer' : 'cursor-not-allowed'
+              }`}
+              placeholder='Paste time in, and time out data here...'
+              onPaste={handlePaste}
+              disabled={isTimeEntriesEnabled ? false : true}
+            />
+          </Card>
 
-          {showAttendanceTables && (
-            <Card className='gap-1 self-end px-4 text-center'>
-              <p>Press CTRL + C to copy</p>
-              <Button onClick={handleCopy}>Copy Data</Button>
-            </Card>
-          )}
+          <Card className='min-w-[189px] flex-col gap-2 self-end grow-1 md:grow-0 p-4 text-center'>
+            <p>Press CTRL + C to copy</p>
+            <Button
+              className={`focus:bg-blue-900 hover:bg-blue-900 ${
+                isAttendanceTableVisible ? 'cursor-pointer' : 'cursor-not-allowed'
+              }`}
+              onClick={handleCopy}
+              variant={isAttendanceTableVisible ? 'default' : 'ghost'}
+              disabled={isAttendanceTableVisible ? false : true}
+            >
+              Copy Data
+            </Button>
+          </Card>
         </div>
 
-        {showAttendanceTables && <AttendanceTable employeeData={employeeData} />}
+        {isAttendanceTableVisible && <AttendanceTable employeeData={employeeData} />}
 
         {showHolidaySelection && (
           <HolidaySelection
             holidays={holidays}
             setHolidays={setHolidays}
             dates={dates}
-            setShowTimeEntries={setShowTimeEntries}
+            setIsTimeEntriesEnabled={setIsTimeEntriesEnabled}
             setShowHolidaySelection={setShowHolidaySelection}
           />
         )}
