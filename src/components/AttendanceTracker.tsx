@@ -7,7 +7,11 @@ import {
   calculateTotalRegularWorkDays,
   calculateTotalSundayWorkDays,
 } from '@/helpers/workdayHelper';
-import { calculateRegularOvertime, calculateTotalSundayOvertime } from '@/helpers/overtimeHelper';
+import {
+  calculateRegularOvertime,
+  calculateTotalRegularHolidayOvertime,
+  calculateTotalSundayOvertime,
+} from '@/helpers/overtimeHelper';
 import AttendanceTable from './AttendanceTable';
 import HolidaySelection from './HolidaySelection';
 import { Button } from '@/components/ui/button';
@@ -66,6 +70,7 @@ const AttendanceTracker = () => {
     const totalRegularOvertime = calculateRegularOvertime(timeEntries);
 
     const totalRegularHoliday = calculateTotalRegularHoliday(timeEntries, holidays);
+    const totalRegularHolidayOvertime = calculateTotalRegularHolidayOvertime(timeEntries, holidays);
 
     return {
       totalRegularWorkDays,
@@ -73,6 +78,7 @@ const AttendanceTracker = () => {
       totalSundayOvertime,
       totalRegularOvertime,
       totalRegularHoliday,
+      totalRegularHolidayOvertime,
     };
   }, []);
 
@@ -121,10 +127,13 @@ const AttendanceTracker = () => {
           totalSundayOvertime,
           totalRegularOvertime,
           totalRegularHoliday,
+          totalRegularHolidayOvertime,
         } = generateSummary(timeEntries, holidays);
         return `${totalRegularWorkDays || ''}\t${totalSundayDays || ''}\t${formatValue(
           totalSundayOvertime
-        )}\t${formatValue(totalRegularOvertime)}\t${totalRegularHoliday || ''}`;
+        )}\t${formatValue(totalRegularOvertime)}\t${totalRegularHoliday || ''}\t${
+          totalRegularHolidayOvertime || ''
+        }`;
       })
       .join('\n');
 
