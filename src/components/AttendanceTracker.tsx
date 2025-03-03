@@ -7,13 +7,18 @@ import {
   calculateTotalRegularWorkDays,
   calculateTotalSundayWorkDays,
 } from '@/helpers/workdayHelper';
-import { calculateRegularOvertime, calculateTotalSundayOvertime } from '@/helpers/overtimeHelper';
+import {
+  calculateRegularOvertime,
+  calculateTotalRegularHolidayOvertime,
+  calculateTotalSundayOvertime,
+} from '@/helpers/overtimeHelper';
 import AttendanceTable from './AttendanceTable';
 import HolidaySelection from './HolidaySelection';
 import { Button } from '@/components/ui/button';
 import Holidays from '@/types/Holidays';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
+import { calculateTotalRegularHoliday } from '@/helpers/holidayHelper';
 
 const AttendanceTracker = () => {
   const [startDate, setStartDate] = useState<string>('');
@@ -58,17 +63,22 @@ const AttendanceTracker = () => {
     return dates;
   };
 
-  const generateSummary = useCallback((timeEntries: TimeEntry[]): Summary => {
+  const generateSummary = useCallback((timeEntries: TimeEntry[], holidays: Holidays): Summary => {
     const totalRegularWorkDays = calculateTotalRegularWorkDays(timeEntries);
     const totalSundayDays = calculateTotalSundayWorkDays(timeEntries);
     const totalSundayOvertime = calculateTotalSundayOvertime(timeEntries);
     const totalRegularOvertime = calculateRegularOvertime(timeEntries);
+
+    const totalRegularHoliday = calculateTotalRegularHoliday(timeEntries, holidays);
+    const totalRegularHolidayOvertime = calculateTotalRegularHolidayOvertime(timeEntries, holidays);
 
     return {
       totalRegularWorkDays,
       totalSundayDays,
       totalSundayOvertime,
       totalRegularOvertime,
+      totalRegularHoliday,
+      totalRegularHolidayOvertime,
     };
   }, []);
 
@@ -93,7 +103,7 @@ const AttendanceTracker = () => {
           timeOut: times[index * 2 + 1] || '',
         }));
 
-        return { name, timeEntries, summary: generateSummary(timeEntries) };
+        return { name, timeEntries, summary: generateSummary(timeEntries, holidays) };
       });
   };
 
@@ -111,17 +121,25 @@ const AttendanceTracker = () => {
   const handleCopy = useCallback(() => {
     const data = employeeData
       .map(({ timeEntries }) => {
-        const { totalRegularWorkDays, totalSundayDays, totalSundayOvertime, totalRegularOvertime } =
-          generateSummary(timeEntries);
+        const {
+          totalRegularWorkDays,
+          totalSundayDays,
+          totalSundayOvertime,
+          totalRegularOvertime,
+          totalRegularHoliday,
+          totalRegularHolidayOvertime,
+        } = generateSummary(timeEntries, holidays);
         return `${totalRegularWorkDays || ''}\t${totalSundayDays || ''}\t${formatValue(
           totalSundayOvertime
-        )}\t${formatValue(totalRegularOvertime)}`;
+        )}\t${formatValue(totalRegularOvertime)}\t${totalRegularHoliday || ''}\t${
+          totalRegularHolidayOvertime || ''
+        }`;
       })
       .join('\n');
 
     navigator.clipboard.writeText(data);
     toast.success('Copied to clipboard!');
-  }, [employeeData, generateSummary]);
+  }, [employeeData, generateSummary, holidays]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
