@@ -9,7 +9,7 @@ export type Summary = {
   totalSundayDays: number;
   totalSundayOvertime: number;
   totalRegularOvertime: number;
-  regularHoliday?: number;
+  totalRegularHoliday: number;
   regularHolidayOvertime?: number;
   nightshift?: number;
   nightshiftOvertime?: number;

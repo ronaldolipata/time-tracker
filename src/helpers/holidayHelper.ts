@@ -1,15 +1,40 @@
+import { isValidTimeEntry } from '@/utils/isValidTimeEntry';
 import { TimeEntry } from '../types/EmployeeData';
 import Holidays from '@/types/Holidays';
 
-export const calculateRegularHoliday = (timeEntries: TimeEntry[], holidays: Holidays): number => {
+export const calculateTotalRegularHoliday = (
+  timeEntries: TimeEntry[],
+  holidays: Holidays
+): number => {
   if (!timeEntries?.length || !holidays?.regular?.dates) {
-    return 0; // Handle cases where inputs are missing or empty
+    return 0;
   }
 
-  return timeEntries.reduce((total, entry) => {
-    const isRegularHoliday = holidays.regular.dates.has(entry.date);
-    return total + (isRegularHoliday ? 2 : 1);
-  }, 0);
+  let totalCount = 0;
+
+  timeEntries.forEach((entry, index) => {
+    if (!isRegularHoliday(entry.date, holidays)) return;
+
+    const workedOnHoliday = isValidTimeEntry(entry.timeIn, entry.timeOut);
+    const workedBefore =
+      index > 0 && isValidTimeEntry(timeEntries[index - 1].timeIn, timeEntries[index - 1].timeOut);
+    const workedAfter =
+      index < timeEntries.length - 1 &&
+      isValidTimeEntry(timeEntries[index + 1].timeIn, timeEntries[index + 1].timeOut);
+
+    if (workedOnHoliday) {
+      totalCount += 2; // Double Pay
+      console.log(`${entry.date} (Regular Holiday) - Worked on regular holiday = 2`);
+    } else if (workedBefore && workedAfter) {
+      totalCount += 1; // Paid Holiday
+      console.log(
+        `${entry.date} (Regular Holiday) - Did not worked on regular holiday, but worked before and after of the regular holiday = 1`
+      );
+    }
+  });
+
+  console.log(`Total count: ${totalCount}`);
+  return totalCount;
 };
 
 export const isRegularHoliday = (date: string, holidays: Holidays): boolean => {
