@@ -38,17 +38,21 @@ const AttendanceTableDialog: React.FC<AttendanceTableDialogProps> = ({
   timeEntries,
 }) => {
   const getBackgroundColor = ({ date }: TimeEntry) => {
+    const classes = [];
+
     if (isSunday(new Date(date))) {
-      return 'bg-red-200';
-    } else if (
+      classes.push('bg-red-200');
+    }
+
+    if (
       isRegularHoliday(date, holidays) ||
       isSpecialNonWorkingHoliday(date, holidays) ||
       isSpecialWorkingHoliday(date, holidays)
     ) {
-      return 'bg-blue-200';
-    } else {
-      return '';
+      classes.push('bg-blue-200');
     }
+
+    return classes.join(' '); // Combine multiple classes
   };
 
   return (
