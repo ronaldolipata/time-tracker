@@ -64,7 +64,7 @@ const AttendanceTracker = () => {
   };
 
   const generateSummary = useCallback((timeEntries: TimeEntry[], holidays: Holidays): Summary => {
-    const totalRegularWorkDays = calculateTotalRegularWorkDays(timeEntries);
+    const totalRegularWorkDays = calculateTotalRegularWorkDays(timeEntries, holidays);
     const totalSundayDays = calculateTotalSundayWorkDays(timeEntries);
     const totalSundayOvertime = calculateTotalSundayOvertime(timeEntries);
     const totalRegularOvertime = calculateRegularOvertime(timeEntries);
