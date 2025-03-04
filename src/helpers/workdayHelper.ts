@@ -1,15 +1,24 @@
 import { TimeEntry } from '../types/EmployeeData';
 import { isSunday } from 'date-fns';
 import { isValidTimeEntry } from '@/utils/isValidTimeEntry';
+import { isRegularHoliday } from './holidayHelper';
+import Holidays from '@/types/Holidays';
 
 /**
  * Calculates the total number of regular workdays (excluding Sundays).
  * @param {TimeEntry[]} timeEntries - Array of time entries for an employee.
  * @returns {number} Total count of regular workdays.
  */
-export const calculateTotalRegularWorkDays = (timeEntries: TimeEntry[]): number => {
+export const calculateTotalRegularWorkDays = (
+  timeEntries: TimeEntry[],
+  holidays: Holidays
+): number => {
   return timeEntries.filter((entry) => {
-    return !isSunday(new Date(entry.date)) && isValidTimeEntry(entry.timeIn, entry.timeOut);
+    return (
+      !isSunday(new Date(entry.date)) &&
+      isValidTimeEntry(entry.timeIn, entry.timeOut) &&
+      !isRegularHoliday(entry.date, holidays)
+    );
   }).length;
 };
 
