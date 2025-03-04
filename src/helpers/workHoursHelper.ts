@@ -34,7 +34,17 @@ export const calculateWorkHours = (timeIn: string, timeOut: string, dateStr: str
     }
 
     const totalMinutesWorked = differenceInMinutes(outTime, inTime);
-    const netMinutesWorked = totalMinutesWorked - LUNCH_BREAK_MINUTES;
+
+    // Only deduct lunch break if the shift includes lunchtime (e.g., 12:00 PM)
+    const lunchStart = parse('12:00 PM', 'h:mm a', new Date(dateStr));
+    const lunchEnd = parse('1:00 PM', 'h:mm a', new Date(dateStr));
+
+    let netMinutesWorked = totalMinutesWorked;
+
+    if (inTime < lunchEnd && outTime > lunchStart) {
+      // The employee's shift includes or overlaps lunchtime
+      netMinutesWorked -= LUNCH_BREAK_MINUTES;
+    }
 
     return Math.max(0, netMinutesWorked / MINUTES_IN_HOUR);
   } catch (error) {
@@ -65,16 +75,28 @@ export const calculateWorkedDuration = (
   return 0;
 };
 
+/**
+ * Checks if the employee has worked a full regular workday.
+ * @param {string} dateStr - The date of the work entry in YYYY-MM-DD format.
+ * @param {string} timeIn - The employee's clock-in time (e.g., "8:00 AM").
+ * @param {string} timeOut - The employee's clock-out time (e.g., "5:00 PM").
+ * @returns {boolean} `true` if the employee worked at least the required regular work hours, otherwise `false`.
+ */
 export const isWorkedWholeDay = (dateStr: string, timeIn: string, timeOut: string): boolean => {
   const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
-  if (workedDuration < REGULAR_WORK_HOURS) return false;
-  return true;
+  return workedDuration >= REGULAR_WORK_HOURS;
 };
 
+/**
+ * Checks if the employee has worked at least a half-day.
+ * @param {string} dateStr - The date of the work entry in YYYY-MM-DD format.
+ * @param {string} timeIn - The employee's clock-in time (e.g., "8:00 AM").
+ * @param {string} timeOut - The employee's clock-out time (e.g., "12:00 PM").
+ * @returns {boolean} `true` if the employee worked at least the minimum required hours for a half-day, otherwise `false`.
+ */
 export const isWorkedHalfDay = (dateStr: string, timeIn: string, timeOut: string): boolean => {
   const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
-  if (workedDuration < MINIMUM_HALF_DAY_HOURS) return false;
-  return true;
+  return workedDuration >= MINIMUM_HALF_DAY_HOURS;
 };
 
 /**

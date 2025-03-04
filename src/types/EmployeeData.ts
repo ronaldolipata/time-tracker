@@ -13,8 +13,8 @@ export type Summary = {
   totalRegularHolidayOvertime: number;
   nightshift?: number;
   nightshiftOvertime?: number;
-  specialNonWorkingHoliday?: number;
-  specialWorkingHoliday?: number;
+  totalSpecialNonWorkingHoliday: number;
+  totalSpecialWorkingHoliday: number;
 };
 
 export type EmployeeData = {

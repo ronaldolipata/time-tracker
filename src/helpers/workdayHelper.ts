@@ -1,7 +1,11 @@
 import { TimeEntry } from '../types/EmployeeData';
 import { isSunday } from 'date-fns';
 import { isValidTimeEntry } from '@/utils/isValidTimeEntry';
-import { isRegularHoliday } from './holidayHelper';
+import {
+  isRegularHoliday,
+  isSpecialNonWorkingHoliday,
+  isSpecialWorkingHoliday,
+} from './holidayHelper';
 import Holidays from '@/types/Holidays';
 import { isWorkedHalfDay, isWorkedWholeDay } from './workHoursHelper';
 
@@ -21,11 +25,13 @@ export const isValidRegularWorkDay = (
 ): boolean => {
   const parsedDate = new Date(date);
 
-  // Exclude Sundays immediately
+  // Exclude Sundays
   if (isSunday(parsedDate)) return false;
 
-  // Exclude holidays
+  // Exclude Holidays
   if (isRegularHoliday(date, holidays)) return false;
+  if (isSpecialNonWorkingHoliday(date, holidays)) return false;
+  if (isSpecialWorkingHoliday(date, holidays)) return false;
 
   // Exclude if no valid time entry
   if (!isValidTimeEntry(timeIn, timeOut)) return false;
