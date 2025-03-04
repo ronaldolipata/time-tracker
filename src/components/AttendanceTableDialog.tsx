@@ -20,7 +20,11 @@ import {
 import { TimeEntry } from '@/types/EmployeeData';
 import { isSunday } from 'date-fns';
 import Holidays from '@/types/Holidays';
-import { isRegularHoliday } from '@/helpers/holidayHelper';
+import {
+  isRegularHoliday,
+  isSpecialNonWorkingHoliday,
+  isSpecialWorkingHoliday,
+} from '@/helpers/holidayHelper';
 
 type AttendanceTableDialogProps = {
   holidays: Holidays;
@@ -33,10 +37,14 @@ const AttendanceTableDialog: React.FC<AttendanceTableDialogProps> = ({
   name,
   timeEntries,
 }) => {
-  const getBackgroundColor = (entry: TimeEntry) => {
-    if (isSunday(new Date(entry.date))) {
+  const getBackgroundColor = ({ date }: TimeEntry) => {
+    if (isSunday(new Date(date))) {
       return 'bg-red-200';
-    } else if (isRegularHoliday(entry.date, holidays)) {
+    } else if (
+      isRegularHoliday(date, holidays) ||
+      isSpecialNonWorkingHoliday(date, holidays) ||
+      isSpecialWorkingHoliday(date, holidays)
+    ) {
       return 'bg-blue-200';
     } else {
       return '';
