@@ -2,6 +2,8 @@ import { differenceInMinutes, parse } from 'date-fns';
 
 const MINUTES_IN_HOUR = 60;
 const LUNCH_BREAK_MINUTES = 60; // 1-hour lunch break
+const REGULAR_WORK_HOURS = 8;
+const MINIMUM_HALF_DAY_HOURS = 4;
 
 /**
  * Calculates the total work hours excluding lunch break.
@@ -36,9 +38,43 @@ export const calculateWorkHours = (timeIn: string, timeOut: string, dateStr: str
 
     return Math.max(0, netMinutesWorked / MINUTES_IN_HOUR);
   } catch (error) {
-    console.error(`Error calculating work hours: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error(
+      `Error calculating work hours: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
     return 0;
   }
+};
+
+/**
+ * Determines if a work entry meets the minimum required hours.
+ * @param {string} timeIn - Clock-in time.
+ * @param {string} timeOut - Clock-out time.
+ * @param {string} dateStr - Date string in YYYY-MM-DD format.
+ * @returns {number} 1 for full day, 0.5 for half day, 0 otherwise.
+ */
+export const calculateWorkedDuration = (
+  timeIn: string,
+  timeOut: string,
+  dateStr: string
+): number => {
+  const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
+
+  if (workedDuration >= REGULAR_WORK_HOURS) return 1;
+  if (workedDuration >= MINIMUM_HALF_DAY_HOURS) return 0.5;
+
+  return 0;
+};
+
+export const isWorkedWholeDay = (dateStr: string, timeIn: string, timeOut: string): boolean => {
+  const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
+  if (workedDuration < REGULAR_WORK_HOURS) return false;
+  return true;
+};
+
+export const isWorkedHalfDay = (dateStr: string, timeIn: string, timeOut: string): boolean => {
+  const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
+  if (workedDuration < MINIMUM_HALF_DAY_HOURS) return false;
+  return true;
 };
 
 /**

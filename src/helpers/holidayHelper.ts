@@ -24,16 +24,11 @@ export const calculateTotalRegularHoliday = (
 
     if (workedOnHoliday) {
       totalCount += 2; // Double Pay
-      console.log(`${entry.date} (Regular Holiday) - Worked on regular holiday = 2`);
     } else if (workedBefore && workedAfter) {
       totalCount += 1; // Paid Holiday
-      console.log(
-        `${entry.date} (Regular Holiday) - Did not worked on regular holiday, but worked before and after of the regular holiday = 1`
-      );
     }
   });
 
-  console.log(`Total count: ${totalCount}`);
   return totalCount;
 };
 
