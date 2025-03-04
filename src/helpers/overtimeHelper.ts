@@ -34,6 +34,13 @@ export const calculateTotalSundayOvertime = (timeEntries: TimeEntry[]): number =
   }, 0);
 };
 
+/**
+ * Calculates the total overtime hours worked on regular holidays.
+ *
+ * @param {TimeEntry[]} timeEntries - The array of time entries for an employee.
+ * @param {Holidays} holidays - The holiday dates categorized by type.
+ * @returns {number} The total overtime hours worked on regular holidays.
+ */
 export const calculateTotalRegularHolidayOvertime = (
   timeEntries: TimeEntry[],
   holidays: Holidays

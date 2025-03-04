@@ -18,7 +18,11 @@ import { Button } from '@/components/ui/button';
 import Holidays from '@/types/Holidays';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
-import { calculateTotalRegularHoliday } from '@/helpers/holidayHelper';
+import {
+  calculateTotalRegularHoliday,
+  calculateTotalSpecialNonWorkingHoliday,
+  calculateTotalSpecialWorkingHoliday,
+} from '@/helpers/holidayHelper';
 
 const AttendanceTracker = () => {
   const [startDate, setStartDate] = useState<string>('');
@@ -71,6 +75,11 @@ const AttendanceTracker = () => {
 
     const totalRegularHoliday = calculateTotalRegularHoliday(timeEntries, holidays);
     const totalRegularHolidayOvertime = calculateTotalRegularHolidayOvertime(timeEntries, holidays);
+    const totalSpecialNonWorkingHoliday = calculateTotalSpecialNonWorkingHoliday(
+      timeEntries,
+      holidays
+    );
+    const totalSpecialWorkingHoliday = calculateTotalSpecialWorkingHoliday(timeEntries, holidays);
 
     return {
       totalRegularWorkDays,
@@ -79,6 +88,8 @@ const AttendanceTracker = () => {
       totalRegularOvertime,
       totalRegularHoliday,
       totalRegularHolidayOvertime,
+      totalSpecialNonWorkingHoliday,
+      totalSpecialWorkingHoliday,
     };
   }, []);
 
@@ -128,12 +139,19 @@ const AttendanceTracker = () => {
           totalRegularOvertime,
           totalRegularHoliday,
           totalRegularHolidayOvertime,
+          totalSpecialNonWorkingHoliday,
+          totalSpecialWorkingHoliday,
         } = generateSummary(timeEntries, holidays);
-        return `${totalRegularWorkDays || ''}\t${totalSundayDays || ''}\t${formatValue(
-          totalSundayOvertime
-        )}\t${formatValue(totalRegularOvertime)}\t${totalRegularHoliday || ''}\t${
-          totalRegularHolidayOvertime || ''
-        }`;
+
+        return `${formatValue(totalRegularWorkDays)}\t${formatValue(
+          totalSundayDays
+        )}\t${formatValue(totalSundayOvertime)}\t${formatValue(
+          totalRegularOvertime
+        )}\t${formatValue(totalRegularHoliday)}\t${formatValue(
+          totalRegularHolidayOvertime
+        )}\t\t\t${formatValue(totalSpecialNonWorkingHoliday)}\t${formatValue(
+          totalSpecialWorkingHoliday
+        )}`;
       })
       .join('\n');
 
