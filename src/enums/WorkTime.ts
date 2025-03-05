@@ -1,0 +1,5 @@
+export enum WorkTime {
+  MINUTES_IN_HOUR = 60,
+  REGULAR_WORK_HOURS = 8,
+  MINIMUM_HALF_DAY_HOURS = 4,
+}
