@@ -1,8 +1,22 @@
 import { TimeEntry } from '../types/EmployeeData';
 import { isSunday } from 'date-fns';
-import { calculateOvertime, calculateWorkHours } from './workHoursHelper';
+import { calculateWorkHours } from './workHoursHelper';
 import { isRegularHoliday } from './holidayHelper';
 import Holidays from '@/types/Holidays';
+import { WorkTime } from '@/enums/WorkTime';
+
+/**
+ * Calculates overtime hours worked beyond the regular working hours.
+ * @param {number} workedHours - Total hours worked in a day.
+ * @returns {number} Overtime hours (if any).
+ */
+export const calculateOvertime = (workedHours: number): number => {
+  if (workedHours < 0 || isNaN(workedHours)) {
+    throw new Error('Invalid input: workedHours must be a non-negative number.');
+  }
+
+  return Math.max(0, workedHours - WorkTime.REGULAR_WORK_HOURS);
+};
 
 /**
  * Calculates total regular overtime hours worked (excluding Sundays).

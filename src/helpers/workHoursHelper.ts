@@ -1,9 +1,6 @@
 import { differenceInMinutes, parse } from 'date-fns';
-
-const MINUTES_IN_HOUR = 60;
-const LUNCH_BREAK_MINUTES = 60; // 1-hour lunch break
-const REGULAR_WORK_HOURS = 8;
-const MINIMUM_HALF_DAY_HOURS = 4;
+import { WorkTime } from '@/enums/WorkTime';
+import { BreakTime } from '@/enums/BreakTime';
 
 /**
  * Calculates the total work hours excluding lunch break.
@@ -13,9 +10,7 @@ const MINIMUM_HALF_DAY_HOURS = 4;
  * @returns {number} Total work hours, rounded to the nearest hour.
  */
 export const calculateWorkHours = (timeIn: string, timeOut: string, dateStr: string): number => {
-  if (!timeIn || !timeOut || timeIn.trim() === '-' || timeOut.trim() === '-') {
-    return 0;
-  }
+  if (!timeIn || !timeOut || timeIn.trim() === '-' || timeOut.trim() === '-') return 0;
 
   try {
     const parseTime = (timeStr: string, referenceDate: string): Date => {
@@ -43,10 +38,10 @@ export const calculateWorkHours = (timeIn: string, timeOut: string, dateStr: str
 
     if (inTime < lunchEnd && outTime > lunchStart) {
       // The employee's shift includes or overlaps lunchtime
-      netMinutesWorked -= LUNCH_BREAK_MINUTES;
+      netMinutesWorked -= BreakTime.LUNCH_BREAK_MINUTES;
     }
 
-    return Math.max(0, netMinutesWorked / MINUTES_IN_HOUR);
+    return Math.max(0, netMinutesWorked / WorkTime.MINUTES_IN_HOUR);
   } catch (error) {
     console.error(
       `Error calculating work hours: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -69,8 +64,8 @@ export const calculateWorkedDuration = (
 ): number => {
   const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
 
-  if (workedDuration >= REGULAR_WORK_HOURS) return 1;
-  if (workedDuration >= MINIMUM_HALF_DAY_HOURS) return 0.5;
+  if (workedDuration >= WorkTime.REGULAR_WORK_HOURS) return 1;
+  if (workedDuration >= WorkTime.MINIMUM_HALF_DAY_HOURS) return 0.5;
 
   return 0;
 };
@@ -84,7 +79,7 @@ export const calculateWorkedDuration = (
  */
 export const isWorkedWholeDay = (dateStr: string, timeIn: string, timeOut: string): boolean => {
   const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
-  return workedDuration >= REGULAR_WORK_HOURS;
+  return workedDuration >= WorkTime.REGULAR_WORK_HOURS;
 };
 
 /**
@@ -96,20 +91,5 @@ export const isWorkedWholeDay = (dateStr: string, timeIn: string, timeOut: strin
  */
 export const isWorkedHalfDay = (dateStr: string, timeIn: string, timeOut: string): boolean => {
   const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
-  return workedDuration >= MINIMUM_HALF_DAY_HOURS;
-};
-
-/**
- * Calculates overtime hours worked beyond the regular working hours.
- * @param {number} workedHours - Total hours worked in a day.
- * @returns {number} Overtime hours (if any).
- */
-export const calculateOvertime = (workedHours: number): number => {
-  const REGULAR_HOURS = 8;
-
-  if (workedHours < 0 || isNaN(workedHours)) {
-    throw new Error('Invalid input: workedHours must be a non-negative number.');
-  }
-
-  return Math.max(0, workedHours - REGULAR_HOURS);
+  return workedDuration >= WorkTime.MINIMUM_HALF_DAY_HOURS;
 };

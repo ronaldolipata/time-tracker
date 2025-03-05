@@ -51,15 +51,8 @@ export const calculateTotalRegularWorkDays = (
 ): number => {
   return timeEntries.reduce((total, { date, timeIn, timeOut }) => {
     if (!isValidRegularWorkDay(date, timeIn, timeOut, holidays)) return total;
-
-    if (isWorkedWholeDay(date, timeIn, timeOut)) {
-      return total + 1;
-    }
-
-    if (isWorkedHalfDay(date, timeIn, timeOut)) {
-      return total + 0.5;
-    }
-
+    if (isWorkedWholeDay(date, timeIn, timeOut)) return total + 1;
+    if (isWorkedHalfDay(date, timeIn, timeOut)) return total + 0.5;
     return total;
   }, 0);
 };
