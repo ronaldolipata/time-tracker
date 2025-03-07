@@ -3,8 +3,8 @@ import { WorkTime } from '@/enums/WorkTime';
 import { BreakTime } from '@/enums/BreakTime';
 
 /**
- * Calculates the total work hours excluding lunch break.
- * @param {string} timeIn - Employee's clock-in time (e.g., "8:00 AM", "5:00 AM").
+ * Calculates the total work hours excluding lunch break when applicable.
+ * @param {string} timeIn - Employee's clock-in time (e.g., "8:00 AM", "5:00 PM").
  * @param {string} timeOut - Employee's clock-out time (e.g., "5:00 PM", "5:00 AM").
  * @param {string} dateStr - Date string in YYYY-MM-DD format.
  * @returns {number} Total work hours, rounded to the nearest hour.
@@ -33,9 +33,7 @@ export const calculateWorkHours = (timeIn: string, timeOut: string, dateStr: str
       const parsedDate = parse(normalizedTimeStr, 'h:mm a', new Date(referenceDate));
 
       // If in time is provided and parsed time is earlier or equal, move to next day
-      if (inTime && parsedDate <= inTime) {
-        return addDays(parsedDate, 1);
-      }
+      if (inTime && parsedDate <= inTime) return addDays(parsedDate, 1);
 
       if (isNaN(parsedDate.getTime())) {
         throw new Error(`Invalid time format: ${timeStr}`);
@@ -50,24 +48,18 @@ export const calculateWorkHours = (timeIn: string, timeOut: string, dateStr: str
     const outTime = parseTime(timeOut, dateStr, inTime);
 
     // Special case: if times are exactly the same, consider it a 24-hour shift
-    if (outTime.getTime() === inTime.getTime()) {
-      return 24;
-    }
+    if (outTime.getTime() === inTime.getTime()) return 24;
 
     if (outTime <= inTime) {
       throw new Error('Clock-out time must be later than clock-in time.');
     }
 
     const totalMinutesWorked = differenceInMinutes(outTime, inTime);
-
-    // Dynamically determine lunch break window
-    const lunchStart = parse('12:00 PM', 'h:mm a', new Date(dateStr));
-    const lunchEnd = parse('1:00 PM', 'h:mm a', new Date(dateStr));
-
     let netMinutesWorked = totalMinutesWorked;
 
-    // Only deduct lunch break if the shift includes lunchtime
-    if (inTime < lunchEnd && outTime > lunchStart) {
+    // Only subtract lunch break if the total work time is at least a full day (8 hours)
+    const totalHoursWorked = totalMinutesWorked / WorkTime.MINUTES_IN_HOUR;
+    if (totalHoursWorked >= WorkTime.REGULAR_WORK_HOURS) {
       netMinutesWorked -= BreakTime.LUNCH_BREAK_MINUTES;
     }
 
@@ -80,26 +72,6 @@ export const calculateWorkHours = (timeIn: string, timeOut: string, dateStr: str
     );
     return 0;
   }
-};
-
-/**
- * Determines if a work entry meets the minimum required hours.
- * @param {string} timeIn - Clock-in time.
- * @param {string} timeOut - Clock-out time.
- * @param {string} dateStr - Date string in YYYY-MM-DD format.
- * @returns {number} 1 for full day, 0.5 for half day, 0 otherwise.
- */
-export const calculateWorkedDuration = (
-  timeIn: string,
-  timeOut: string,
-  dateStr: string
-): number => {
-  const workedDuration = calculateWorkHours(timeIn, timeOut, dateStr);
-
-  if (workedDuration >= WorkTime.REGULAR_WORK_HOURS) return 1;
-  if (workedDuration >= WorkTime.MINIMUM_HALF_DAY_HOURS) return 0.5;
-
-  return 0;
 };
 
 /**
