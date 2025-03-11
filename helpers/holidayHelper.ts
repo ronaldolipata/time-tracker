@@ -72,32 +72,8 @@ export function calculateTotalSpecialNonWorkingHoliday(
 
     const workedOnHoliday = isValidTimeEntry(timeIn, timeOut);
 
-    // Find the nearest valid workday before the holiday
-    let prevWorkDay = subDays(new Date(date), 1);
-    while (isSunday(prevWorkDay)) {
-      prevWorkDay = subDays(prevWorkDay, 1);
-    }
-    const workedBefore = timeEntries.some(
-      ({ date: prevDate, timeIn, timeOut }) =>
-        new Date(prevDate).toDateString() === prevWorkDay.toDateString() &&
-        isValidTimeEntry(timeIn, timeOut)
-    );
-
-    // Find the nearest valid workday after the holiday
-    let nextWorkDay = addDays(new Date(date), 1);
-    while (isSunday(nextWorkDay)) {
-      nextWorkDay = addDays(nextWorkDay, 1);
-    }
-    const workedAfter = timeEntries.some(
-      ({ date: nextDate, timeIn, timeOut }) =>
-        new Date(nextDate).toDateString() === nextWorkDay.toDateString() &&
-        isValidTimeEntry(timeIn, timeOut)
-    );
-
     if (workedOnHoliday) {
-      totalCount += 2; // 130% Pay
-    } else if (workedBefore && workedAfter) {
-      totalCount += 1; // Paid Holiday
+      totalCount += 1; // 130% pay
     }
   });
 
