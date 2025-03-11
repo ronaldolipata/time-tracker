@@ -5,10 +5,10 @@
  * @param {string} string - The input string to be truncated.
  * @returns {string} The truncated string with an ellipsis if it exceeds the maxLength.
  */
-const addEllipsis = (maxLength: number, string: string): string => {
+export function addEllipsis(maxLength: number, string: string): string {
   if (string && string.length <= maxLength) return string;
   const truncatedString = string.slice(0, maxLength);
   return truncatedString + '...';
-};
+}
 
 export default addEllipsis;
