@@ -41,14 +41,14 @@ export default function Home() {
     specialWorkingHoliday: { dates: new Set() },
   });
 
-  const notifySuccess = () => {
+  function notifySuccess() {
     toast.success('Time entries successfully entered!', {
       position: 'top-right',
       autoClose: 3000,
     });
-  };
+  }
 
-  const handleApplyDates = () => {
+  function handleApplyDates() {
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
@@ -57,9 +57,9 @@ export default function Home() {
       setIsAttendanceTableVisible(false);
       setIsTimeEntriesEnabled(false);
     }
-  };
+  }
 
-  const getDatesInRange = (start: Date, end: Date): string[] => {
+  function getDatesInRange(start: Date, end: Date): string[] {
     const dates = [];
     let current = start;
     while (current <= end) {
@@ -67,7 +67,7 @@ export default function Home() {
       current = addDays(current, 1);
     }
     return dates;
-  };
+  }
 
   const generateSummary = useCallback((timeEntries: TimeEntry[], holidays: Holidays): Summary => {
     const totalRegularWorkDays = calculateTotalRegularWorkDays(timeEntries, holidays);
@@ -95,7 +95,7 @@ export default function Home() {
     };
   }, []);
 
-  const processPastedData = (pastedText: string): EmployeeData[] => {
+  function processPastedData(pastedText: string): EmployeeData[] {
     if (!startDate || !endDate) {
       toast.error('Please select a date range before pasting data.');
       return [];
@@ -118,16 +118,16 @@ export default function Home() {
 
         return { name, timeEntries, summary: generateSummary(timeEntries, holidays) };
       });
-  };
+  }
 
-  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+  function handlePaste(event: React.ClipboardEvent<HTMLInputElement>) {
     event.preventDefault();
     const pastedText = event.clipboardData.getData('Text');
     const newEmployeeData = processPastedData(pastedText);
     setEmployeeData(newEmployeeData);
     setIsAttendanceTableVisible(true);
     notifySuccess();
-  };
+  }
 
   const formatValue = (value: number) => (value > 0 ? value.toFixed(2).replace(/\.00$/, '') : '');
 
@@ -162,12 +162,12 @@ export default function Home() {
   }, [employeeData, generateSummary, holidays]);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    function handleKeyDown(event: KeyboardEvent) {
       if (event.ctrlKey && event.key === 'c') {
         event.preventDefault();
         handleCopy();
       }
-    };
+    }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleCopy]);

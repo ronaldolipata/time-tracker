@@ -29,7 +29,7 @@ export default function AttendanceTableDialog({
   name,
   timeEntries,
 }: AttendanceTableDialogProps) {
-  const getBackgroundColor = ({ date }: TimeEntry) => {
+  function getBackgroundColor({ date }: TimeEntry) {
     const classes = [];
 
     if (isSunday(new Date(date))) {
@@ -45,7 +45,7 @@ export default function AttendanceTableDialog({
     }
 
     return classes.join(' '); // Combine multiple classes
-  };
+  }
 
   return (
     <Dialog>
