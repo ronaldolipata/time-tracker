@@ -22,7 +22,7 @@ export default function HolidaySelection({
   setIsTimeEntriesEnabled,
   setShowHolidaySelection,
 }: DateSelectionProps) {
-  const handleHolidayCheckboxChange = (date: string, type: keyof Holidays): void => {
+  function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
     setHolidays((prev) => {
       const updatedHolidays: Holidays = {
         regular: { dates: new Set(prev.regular.dates) },
@@ -52,12 +52,12 @@ export default function HolidaySelection({
 
       return updatedHolidays;
     });
-  };
+  }
 
-  const handleSetShowTimeEntries = (): void => {
+  function handleSetShowTimeEntries(): void {
     setIsTimeEntriesEnabled(true);
     setShowHolidaySelection(false);
-  };
+  }
 
   return (
     <div className='flex flex-col'>
