@@ -16,7 +16,7 @@ import {
 } from '@/helpers/overtimeHelper';
 import AttendanceTable from './AttendanceTable';
 import HolidaySelection from './HolidaySelection';
-import { Button } from '@/components/ui/button';
+import { Button } from './ui/button';
 import Holidays from '@/types/Holidays';
 import { Input } from './ui/input';
 import { Card } from './ui/card';

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from './ui/button';
 import {
   Dialog,
   DialogClose,
@@ -7,15 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+} from './ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { TimeEntry } from '@/types/EmployeeData';
 import { isSunday } from 'date-fns';
 import Holidays from '@/types/Holidays';
