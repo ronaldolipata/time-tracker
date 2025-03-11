@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,11 +31,11 @@ type AttendanceTableDialogProps = {
   timeEntries: TimeEntry[];
 };
 
-const AttendanceTableDialog: React.FC<AttendanceTableDialogProps> = ({
+export default function AttendanceTableDialog({
   holidays,
   name,
   timeEntries,
-}) => {
+}: AttendanceTableDialogProps) {
   const getBackgroundColor = ({ date }: TimeEntry) => {
     const classes = [];
 
@@ -94,6 +93,4 @@ const AttendanceTableDialog: React.FC<AttendanceTableDialogProps> = ({
       </DialogContent>
     </Dialog>
   );
-};
-
-export default AttendanceTableDialog;
+}
