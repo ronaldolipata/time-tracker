@@ -20,7 +20,7 @@ export default function AttendanceTable({ holidays, employeeData }: AttendanceTa
     <div className='flex flex-wrap gap-4'>
       {employeeData.map(({ name, timeEntries, summary }: EmployeeData) => (
         <Card key={name} className='w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(100%/3-0.7rem)] p-4'>
-          <h3 className='text-lg font-bold text-center text-blue-900'>{addEllipsis(20, name)}</h3>
+          <p className='text-lg font-bold text-center text-blue-900'>{addEllipsis(20, name)}</p>
           {/* Two-column layout for summary items */}
           <div className='grid grid-cols-2 gap-2 w-full text-center'>
             {Object.keys(summary).map((key) => {
