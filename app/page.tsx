@@ -16,10 +16,10 @@ import {
 } from '@/helpers/overtimeHelper';
 import AttendanceTable from './components/AttendanceTable';
 import HolidaySelection from './components/HolidaySelection';
-import { Button } from './components/ui/button';
+import { Button } from '@/components/ui/button';
 import Holidays from '@/types/Holidays';
-import { Input } from './components/ui/input';
-import { Card } from './components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 import {
   calculateTotalRegularHoliday,
   calculateTotalSpecialNonWorkingHoliday,

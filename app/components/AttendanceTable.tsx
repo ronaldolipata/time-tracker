@@ -1,5 +1,5 @@
 import { EmployeeData, Summary } from '@/types/EmployeeData';
-import { Card } from './ui/card';
+import { Card } from '@/components/ui/card';
 import addEllipsis from '@/helpers/addEllipsis';
 import AttendanceTableDialog from './AttendanceTableDialog';
 import Holidays from '@/types/Holidays';
