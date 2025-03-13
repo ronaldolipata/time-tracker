@@ -58,7 +58,7 @@ export default function AttendanceTableDialog({
     <Dialog>
       <DialogTrigger asChild>
         <Button className='focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'>
-          Show Attendance Table
+          Show attendance table
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-md'>
