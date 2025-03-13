@@ -2,9 +2,16 @@
 
 import React from 'react';
 import Holidays from '@/types/Holidays';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { isSunday } from 'date-fns';
 
 type DateSelectionProps = {
