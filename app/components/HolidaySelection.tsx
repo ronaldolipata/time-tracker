@@ -12,7 +12,9 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { isSunday } from 'date-fns';
+import { formatDate } from '@/utils/formatDate';
+import DayColorIndicator from '@/components/DayColorIndicator';
+import { getTableRowBackgroundClass } from '@/helpers/getTableRowBackgroundClass';
 
 type DateSelectionProps = {
   holidays: Holidays;
@@ -67,51 +69,53 @@ export default function HolidaySelection({
   }
 
   return (
-    <div className='flex flex-col'>
-      <Table className='w-full border-collapse border mb-4'>
-        <TableHeader>
-          <TableRow className='bg-gray-200'>
-            <TableHead className='border p-2 text-center'>Date</TableHead>
-            <TableHead className='border p-2 text-center'>Regular Holiday</TableHead>
-            <TableHead className='border p-2 text-center'>Special Non-working</TableHead>
-            <TableHead className='border p-2 text-center'>Special Working</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {dates.map((date) => (
-            <TableRow key={date} className={isSunday(new Date(date)) ? 'bg-red-200' : ''}>
-              <TableCell className='border p-2 text-center'>{date}</TableCell>
-              <TableCell className='border p-2 text-center'>
-                <Input
-                  type='checkbox'
-                  checked={holidays.regular.dates.has(date)}
-                  onChange={() => handleHolidayCheckboxChange(date, 'regular')}
-                  className='h-6 shadow-none'
-                />
-              </TableCell>
-              <TableCell className='border p-2 text-center'>
-                <Input
-                  type='checkbox'
-                  checked={holidays.specialNonWorkingHoliday.dates.has(date)}
-                  onChange={() => handleHolidayCheckboxChange(date, 'specialNonWorkingHoliday')}
-                  className='h-6 shadow-none'
-                />
-              </TableCell>
-              <TableCell className='border p-2 text-center'>
-                <Input
-                  type='checkbox'
-                  checked={holidays.specialWorkingHoliday.dates.has(date)}
-                  onChange={() => handleHolidayCheckboxChange(date, 'specialWorkingHoliday')}
-                  className='h-6 shadow-none'
-                />
-              </TableCell>
+    <div className='flex flex-col gap-4'>
+      <DayColorIndicator />
+      <div className='rounded-md border'>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className='pl-4'>Date</TableHead>
+              <TableHead className='p-2 text-center'>Regular</TableHead>
+              <TableHead className='p-2 text-center'>Special Non-working</TableHead>
+              <TableHead className='p-2 text-center'>Special Working</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-
+          </TableHeader>
+          <TableBody>
+            {dates.map((date) => (
+              <TableRow key={date} className={getTableRowBackgroundClass(date, holidays)}>
+                <TableCell className='pl-4'>{formatDate(date)}</TableCell>
+                <TableCell className='p-2 text-center'>
+                  <Input
+                    type='checkbox'
+                    checked={holidays.regular.dates.has(date)}
+                    onChange={() => handleHolidayCheckboxChange(date, 'regular')}
+                    className='h-6 shadow-none'
+                  />
+                </TableCell>
+                <TableCell className='p-2 text-center'>
+                  <Input
+                    type='checkbox'
+                    checked={holidays.specialNonWorkingHoliday.dates.has(date)}
+                    onChange={() => handleHolidayCheckboxChange(date, 'specialNonWorkingHoliday')}
+                    className='h-6 shadow-none'
+                  />
+                </TableCell>
+                <TableCell className='p-2 text-center'>
+                  <Input
+                    type='checkbox'
+                    checked={holidays.specialWorkingHoliday.dates.has(date)}
+                    onChange={() => handleHolidayCheckboxChange(date, 'specialWorkingHoliday')}
+                    className='h-6 shadow-none'
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
       <Button
-        className='self-end mt-4 focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
+        className='self-end focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
         onClick={handleSetShowTimeEntries}
       >
         Proceed to Input Time In and Time Out
