@@ -96,11 +96,6 @@ export default function Home() {
   }, []);
 
   function processPastedData(pastedText: string): EmployeeData[] {
-    if (!startDate || !endDate) {
-      toast.error('Please select a date range before pasting data.');
-      return [];
-    }
-
     const start = new Date(startDate);
     const end = new Date(endDate);
     const dates = getDatesInRange(start, end);
@@ -122,6 +117,15 @@ export default function Home() {
 
   function handlePaste(event: React.ClipboardEvent<HTMLInputElement>) {
     event.preventDefault();
+
+    if (!startDate || !endDate) {
+      toast.error('Please select a date range before pasting data.');
+      return [];
+    }
+
+    if (!isTimeEntriesEnabled)
+      return toast.error('Please select the holidays first before proceeding.');
+
     const pastedText = event.clipboardData.getData('Text');
     const newEmployeeData = processPastedData(pastedText);
     setEmployeeData(newEmployeeData);
@@ -218,7 +222,7 @@ export default function Home() {
           <Card className='min-w-[189px] gap-4 grow-1 p-4'>
             <div className='flex flex-col gap-2'>
               <CardTitle>Time Entries</CardTitle>
-              <CardDescription>e.g. DOE, JOHN 9:00 AM 5:00 PM</CardDescription>
+              <CardDescription>e.g. DOE, JOHN 8:00 AM 5:00 PM</CardDescription>
             </div>
             <Input
               type='text'
