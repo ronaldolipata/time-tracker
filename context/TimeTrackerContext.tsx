@@ -15,41 +15,55 @@ import { addDays, format } from 'date-fns';
 import { calculateSummary } from '@/helpers/calculateSummary';
 
 type TimeTrackerType = {
+  // Payroll Period
   startDate: string;
   endDate: string;
   setStartDate: Dispatch<SetStateAction<string>>;
   setEndDate: Dispatch<SetStateAction<string>>;
+
+  // Holidays
   dates: string[];
   holidays: Holidays;
-  showHolidaySelection: boolean;
+  setHolidays: Dispatch<SetStateAction<Holidays>>;
+
+  // UI
+  isHolidaySelectionVisible: boolean;
   isAttendanceTableVisible: boolean;
   isTimeEntriesEnabled: boolean;
   setIsTimeEntriesEnabled: Dispatch<SetStateAction<boolean>>;
-  setShowHolidaySelection: Dispatch<SetStateAction<boolean>>;
-  setHolidays: Dispatch<SetStateAction<Holidays>>;
-  handleApplyDates: () => void;
+  setIsHolidaySelectionVisible: Dispatch<SetStateAction<boolean>>;
+
+  // Functions
+  handleApplyDates: (startDate: string, endDate: string) => void;
   handlePaste: (
     event: React.ClipboardEvent<HTMLInputElement>
   ) => string | number | never[] | undefined;
   handleCopy: () => void;
+
   employeeData: EmployeeData[];
 };
 
 const TimeTrackerContext = createContext<TimeTrackerType | undefined>(undefined);
 
 export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
+  // Payroll Period
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+
+  // Holidays
   const [dates, setDates] = useState<string[]>([]);
-  const [showHolidaySelection, setShowHolidaySelection] = useState<boolean>(false);
-  const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
-  const [isTimeEntriesEnabled, setIsTimeEntriesEnabled] = useState<boolean>(false);
-  const [isAttendanceTableVisible, setIsAttendanceTableVisible] = useState<boolean>(false);
   const [holidays, setHolidays] = useState<Holidays>({
     regular: { dates: new Set() },
     specialNonWorkingHoliday: { dates: new Set() },
     specialWorkingHoliday: { dates: new Set() },
   });
+
+  // UI
+  const [isHolidaySelectionVisible, setIsHolidaySelectionVisible] = useState<boolean>(false);
+  const [isTimeEntriesEnabled, setIsTimeEntriesEnabled] = useState<boolean>(false);
+  const [isAttendanceTableVisible, setIsAttendanceTableVisible] = useState<boolean>(false);
+
+  const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
 
   function notifySuccess() {
     toast.success('Time entries successfully entered!', {
@@ -58,12 +72,12 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     });
   }
 
-  function handleApplyDates(): void {
+  function handleApplyDates(startDate: string, endDate: string): void {
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
       setDates(getDatesInRange(start, end));
-      setShowHolidaySelection(true);
+      setIsHolidaySelectionVisible(true);
       setIsAttendanceTableVisible(false);
       setIsTimeEntriesEnabled(false);
     }
@@ -79,11 +93,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     return dates;
   }
 
-  function processPastedData(pastedText: string): EmployeeData[] {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const dates = getDatesInRange(start, end);
-
+  function processPastedData(dates: string[], pastedText: string): EmployeeData[] {
     return pastedText
       .split('\n')
       .filter((line) => line.trim() !== '')
@@ -111,7 +121,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       return toast.error('Please select the holidays first before proceeding.');
 
     const pastedText = event.clipboardData.getData('Text');
-    const newEmployeeData = processPastedData(pastedText);
+    const newEmployeeData = processPastedData(dates, pastedText);
     setEmployeeData(newEmployeeData);
     setIsAttendanceTableVisible(true);
     notifySuccess();
@@ -152,21 +162,29 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   return (
     <TimeTrackerContext.Provider
       value={{
+        // Payroll Period
         startDate,
         endDate,
         setStartDate,
         setEndDate,
+
+        // Holidays
         dates,
         holidays,
-        showHolidaySelection,
+        setHolidays,
+
+        // UI
+        isHolidaySelectionVisible,
         isAttendanceTableVisible,
         isTimeEntriesEnabled,
         setIsTimeEntriesEnabled,
-        setShowHolidaySelection,
-        setHolidays,
+        setIsHolidaySelectionVisible,
+
+        // Functions
         handleApplyDates,
         handlePaste,
         handleCopy,
+
         employeeData,
       }}
     >
