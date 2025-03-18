@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import { TimeTrackerProvider } from '@/context/TimeTrackerContext';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,7 +30,9 @@ export default function RootLayout({
         <div className='min-h-screen flex flex-col'>
           <div className='flex-grow'>
             <div className='2xl:w-[100rem] lg:mx-auto'>
-              <div className='w-full px-5 md:px-8 mx-auto'>{children}</div>
+              <div className='w-full px-5 md:px-8 mx-auto'>
+                <TimeTrackerProvider>{children}</TimeTrackerProvider>
+              </div>
             </div>
           </div>
         </div>

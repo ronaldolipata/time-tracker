@@ -22,3 +22,17 @@ export type EmployeeData = {
   timeEntries: TimeEntry[];
   summary: Summary;
 };
+
+export type Location = {
+  location: string;
+};
+
+export type ProjectName = {
+  projectName: string;
+};
+
+export type Holidays = {
+  regular: { dates: Set<string> };
+  specialNonWorkingHoliday: { dates: Set<string> };
+  specialWorkingHoliday: { dates: Set<string> };
+};

@@ -1,169 +1,28 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { format, addDays } from 'date-fns';
-import { ToastContainer, toast } from 'react-toastify';
+import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { TimeEntry, EmployeeData, Summary } from '@/types/EmployeeData';
-import {
-  calculateTotalRegularWorkDays,
-  calculateTotalSundayWorkDays,
-} from '@/helpers/workdayHelper';
-import {
-  calculateRegularOvertime,
-  calculateTotalRegularHolidayOvertime,
-  calculateTotalSundayOvertime,
-} from '@/helpers/overtimeHelper';
 import AttendanceTable from './components/AttendanceTable';
 import HolidaySelection from './components/HolidaySelection';
 import { Button } from '@/components/ui/button';
-import Holidays from '@/types/Holidays';
 import { Input } from '@/components/ui/input';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
-import {
-  calculateTotalRegularHoliday,
-  calculateTotalSpecialNonWorkingHoliday,
-  calculateTotalSpecialWorkingHoliday,
-} from '@/helpers/holidayHelper';
+import { useTimeTracker } from '@/context/TimeTrackerContext';
 
 export default function Home() {
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
-  const [dates, setDates] = useState<string[]>([]);
-  const [showHolidaySelection, setShowHolidaySelection] = useState<boolean>(false);
-  const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
-  const [isTimeEntriesEnabled, setIsTimeEntriesEnabled] = useState<boolean>(false);
-  const [isAttendanceTableVisible, setIsAttendanceTableVisible] = useState<boolean>(false);
-
-  const [holidays, setHolidays] = useState<Holidays>({
-    regular: { dates: new Set() },
-    specialNonWorkingHoliday: { dates: new Set() },
-    specialWorkingHoliday: { dates: new Set() },
-  });
-
-  function notifySuccess() {
-    toast.success('Time entries successfully entered!', {
-      position: 'top-right',
-      autoClose: 3000,
-    });
-  }
-
-  function handleApplyDates() {
-    if (startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      setDates(getDatesInRange(start, end));
-      setShowHolidaySelection(true);
-      setIsAttendanceTableVisible(false);
-      setIsTimeEntriesEnabled(false);
-    }
-  }
-
-  function getDatesInRange(start: Date, end: Date): string[] {
-    const dates = [];
-    let current = start;
-    while (current <= end) {
-      dates.push(format(current, 'MM/dd/yyyy'));
-      current = addDays(current, 1);
-    }
-    return dates;
-  }
-
-  const generateSummary = useCallback((timeEntries: TimeEntry[], holidays: Holidays): Summary => {
-    const totalRegularWorkDays = calculateTotalRegularWorkDays(timeEntries, holidays);
-    const totalSundayDays = calculateTotalSundayWorkDays(timeEntries, holidays);
-    const totalSundayOvertime = calculateTotalSundayOvertime(timeEntries);
-    const totalRegularOvertime = calculateRegularOvertime(timeEntries);
-
-    const totalRegularHoliday = calculateTotalRegularHoliday(timeEntries, holidays);
-    const totalRegularHolidayOvertime = calculateTotalRegularHolidayOvertime(timeEntries, holidays);
-    const totalSpecialNonWorkingHoliday = calculateTotalSpecialNonWorkingHoliday(
-      timeEntries,
-      holidays
-    );
-    const totalSpecialWorkingHoliday = calculateTotalSpecialWorkingHoliday(timeEntries, holidays);
-
-    return {
-      totalRegularWorkDays,
-      totalSundayDays,
-      totalSundayOvertime,
-      totalRegularOvertime,
-      totalRegularHoliday,
-      totalRegularHolidayOvertime,
-      totalSpecialNonWorkingHoliday,
-      totalSpecialWorkingHoliday,
-    };
-  }, []);
-
-  function processPastedData(pastedText: string): EmployeeData[] {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const dates = getDatesInRange(start, end);
-
-    return pastedText
-      .split('\n')
-      .filter((line) => line.trim() !== '')
-      .map((line) => {
-        const [name, ...times] = line.split(/\t|\s{2,}/);
-        const timeEntries: TimeEntry[] = dates.map((date, index) => ({
-          date,
-          timeIn: times[index * 2] || '',
-          timeOut: times[index * 2 + 1] || '',
-        }));
-
-        return { name, timeEntries, summary: generateSummary(timeEntries, holidays) };
-      });
-  }
-
-  function handlePaste(event: React.ClipboardEvent<HTMLInputElement>) {
-    event.preventDefault();
-
-    if (!startDate || !endDate) {
-      toast.error('Please select a date range before pasting data.');
-      return [];
-    }
-
-    if (!isTimeEntriesEnabled)
-      return toast.error('Please select the holidays first before proceeding.');
-
-    const pastedText = event.clipboardData.getData('Text');
-    const newEmployeeData = processPastedData(pastedText);
-    setEmployeeData(newEmployeeData);
-    setIsAttendanceTableVisible(true);
-    notifySuccess();
-  }
-
-  const formatValue = (value: number) => (value > 0 ? value.toFixed(2).replace(/\.00$/, '') : '');
-
-  const handleCopy = useCallback(() => {
-    const data = employeeData
-      .map(({ timeEntries }) => {
-        const {
-          totalRegularWorkDays,
-          totalSundayDays,
-          totalSundayOvertime,
-          totalRegularOvertime,
-          totalRegularHoliday,
-          totalRegularHolidayOvertime,
-          totalSpecialNonWorkingHoliday,
-          totalSpecialWorkingHoliday,
-        } = generateSummary(timeEntries, holidays);
-
-        return `${formatValue(totalRegularWorkDays)}\t${formatValue(
-          totalSundayDays
-        )}\t${formatValue(totalSundayOvertime)}\t${formatValue(
-          totalRegularOvertime
-        )}\t${formatValue(totalRegularHoliday)}\t${formatValue(
-          totalRegularHolidayOvertime
-        )}\t\t\t${formatValue(totalSpecialNonWorkingHoliday)}\t${formatValue(
-          totalSpecialWorkingHoliday
-        )}`;
-      })
-      .join('\n');
-
-    navigator.clipboard.writeText(data);
-    toast.success('Copied to clipboard!');
-  }, [employeeData, generateSummary, holidays]);
+  const {
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
+    showHolidaySelection,
+    isAttendanceTableVisible,
+    isTimeEntriesEnabled,
+    handleApplyDates,
+    handlePaste,
+    handleCopy,
+  } = useTimeTracker();
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -277,19 +136,8 @@ export default function Home() {
           </div>
         </Card>
 
-        {isAttendanceTableVisible && (
-          <AttendanceTable holidays={holidays} employeeData={employeeData} />
-        )}
-
-        {showHolidaySelection && (
-          <HolidaySelection
-            holidays={holidays}
-            setHolidays={setHolidays}
-            dates={dates}
-            setIsTimeEntriesEnabled={setIsTimeEntriesEnabled}
-            setShowHolidaySelection={setShowHolidaySelection}
-          />
-        )}
+        {isAttendanceTableVisible && <AttendanceTable />}
+        {showHolidaySelection && <HolidaySelection />}
       </div>
     </>
   );

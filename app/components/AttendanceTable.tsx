@@ -1,15 +1,12 @@
-import { EmployeeData, Summary } from '@/types/EmployeeData';
 import { Card } from '@/components/ui/card';
 import addEllipsis from '@/helpers/addEllipsis';
 import AttendanceTableDialog from './AttendanceTableDialog';
-import Holidays from '@/types/Holidays';
+import { EmployeeData, Summary } from '@/context/types';
+import { useTimeTracker } from '@/context/TimeTrackerContext';
 
-type AttendanceTableProps = {
-  holidays: Holidays;
-  employeeData: EmployeeData[];
-};
+export default function AttendanceTable() {
+  const { holidays, employeeData } = useTimeTracker();
 
-export default function AttendanceTable({ holidays, employeeData }: AttendanceTableProps) {
   const convertTitleCase = (title: string): string => {
     return title
       .replace(/([A-Z])/g, ' $1') // Add space before capital letters
