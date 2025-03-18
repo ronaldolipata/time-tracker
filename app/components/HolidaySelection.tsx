@@ -18,7 +18,7 @@ import { Holidays } from '@/context/types';
 import { useTimeTracker } from '@/context/TimeTrackerContext';
 
 export default function HolidaySelection() {
-  const { dates, setHolidays, holidays, setIsTimeEntriesEnabled, setShowHolidaySelection } =
+  const { dates, setHolidays, holidays, setIsTimeEntriesEnabled, setIsHolidaySelectionVisible } =
     useTimeTracker();
 
   function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
@@ -55,7 +55,7 @@ export default function HolidaySelection() {
 
   function handleSetShowTimeEntries(): void {
     setIsTimeEntriesEnabled(true);
-    setShowHolidaySelection(false);
+    setIsHolidaySelectionVisible(false);
   }
 
   return (
