@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Holidays from '@/types/Holidays';
 import {
   Table,
   TableBody,
@@ -15,22 +14,13 @@ import { Button } from '@/components/ui/button';
 import { formatDate } from '@/utils/formatDate';
 import DayColorIndicator from '@/components/DayColorIndicator';
 import { getTableRowBackgroundClass } from '@/helpers/getTableRowBackgroundClass';
+import { Holidays } from '@/context/types';
+import { useTimeTracker } from '@/context/TimeTrackerContext';
 
-type DateSelectionProps = {
-  holidays: Holidays;
-  setHolidays: React.Dispatch<React.SetStateAction<Holidays>>;
-  dates: string[];
-  setIsTimeEntriesEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-  setShowHolidaySelection: React.Dispatch<React.SetStateAction<boolean>>;
-};
+export default function HolidaySelection() {
+  const { dates, setHolidays, holidays, setIsTimeEntriesEnabled, setShowHolidaySelection } =
+    useTimeTracker();
 
-export default function HolidaySelection({
-  holidays,
-  setHolidays,
-  dates,
-  setIsTimeEntriesEnabled,
-  setShowHolidaySelection,
-}: DateSelectionProps) {
   function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
     setHolidays((prev) => {
       const updatedHolidays: Holidays = {
