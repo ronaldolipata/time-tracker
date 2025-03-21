@@ -1,6 +1,5 @@
 import { isValidTimeEntry } from '@/utils/isValidTimeEntry';
-import { TimeEntry } from '../types/EmployeeData';
-import Holidays from '@/types/Holidays';
+import { TimeEntry, Holidays } from '@/context/types';
 import { addDays, isSunday, subDays } from 'date-fns';
 
 /**

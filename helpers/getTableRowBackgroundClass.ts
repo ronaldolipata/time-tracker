@@ -1,4 +1,4 @@
-import Holidays from '@/types/Holidays';
+import { Holidays } from '@/context/types';
 import { isHolidayDay } from '@/utils/isHolidayDay';
 import { isSundayDay } from '@/utils/isSundayDay';
 

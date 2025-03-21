@@ -7,7 +7,7 @@ export default function TimeEntries() {
   const { isTimeEntriesEnabled, handlePaste } = useTimeTracker();
 
   return (
-    <Card className='min-w-[189px] gap-4 grow-1 p-4'>
+    <Card className='w-full min-w-[189px] gap-4 grow-1 p-4'>
       <div className='flex flex-col gap-2'>
         <CardTitle>Time Entries</CardTitle>
         <CardDescription>e.g. DOE, JOHN 8:00 AM 5:00 PM</CardDescription>
