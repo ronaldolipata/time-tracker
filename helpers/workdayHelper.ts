@@ -1,4 +1,4 @@
-import { TimeEntry } from '../types/EmployeeData';
+import { TimeEntry, Holidays } from '@/context/types';
 import { isSunday } from 'date-fns';
 import { isValidTimeEntry } from '@/utils/isValidTimeEntry';
 import {
@@ -6,7 +6,6 @@ import {
   isSpecialNonWorkingHoliday,
   isSpecialWorkingHoliday,
 } from './holidayHelper';
-import Holidays from '@/types/Holidays';
 import { isWorkedHalfDay, isWorkedWholeDay } from './workHoursHelper';
 
 /**

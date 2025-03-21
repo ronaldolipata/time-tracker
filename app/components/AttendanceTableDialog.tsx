@@ -16,11 +16,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { TimeEntry } from '@/types/EmployeeData';
-import Holidays from '@/types/Holidays';
 import { formatDate } from '@/utils/formatDate';
 import DayColorIndicator from '@/components/DayColorIndicator';
 import { getTableRowBackgroundClass } from '@/helpers/getTableRowBackgroundClass';
+import { Holidays, TimeEntry } from '@/context/types';
 
 type AttendanceTableDialogProps = {
   holidays: Holidays;
@@ -40,7 +39,7 @@ export default function AttendanceTableDialog({
           Show attendance table
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='sm:max-w-xl'>
         <DialogHeader>
           <DialogTitle className='font-bold text-blue-900'>{name}</DialogTitle>
         </DialogHeader>
@@ -55,13 +54,25 @@ export default function AttendanceTableDialog({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {timeEntries.map(({ date, timeIn, timeOut }, index) => (
-                <TableRow className={getTableRowBackgroundClass(date, holidays)} key={index}>
-                  <TableCell className='pl-4 text-left'>{formatDate(date)}</TableCell>
-                  <TableCell className='p-2'>{timeIn}</TableCell>
-                  <TableCell className='p-2'>{timeOut}</TableCell>
-                </TableRow>
-              ))}
+              {timeEntries.map(({ date, timeIn, timeOut }, index) => {
+                const formattedDate = formatDate(date);
+
+                const holidayType = holidays.regular.dates.has(date)
+                  ? ' (Regular Holiday)'
+                  : holidays.specialNonWorkingHoliday.dates.has(date)
+                  ? ' (Special Non-Working Holiday)'
+                  : holidays.specialWorkingHoliday.dates.has(date)
+                  ? ' (Special Working Holiday)'
+                  : '';
+
+                return (
+                  <TableRow className={getTableRowBackgroundClass(date, holidays)} key={index}>
+                    <TableCell className='pl-4 text-left'>{formattedDate + holidayType}</TableCell>
+                    <TableCell className='p-2'>{timeIn}</TableCell>
+                    <TableCell className='p-2'>{timeOut}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

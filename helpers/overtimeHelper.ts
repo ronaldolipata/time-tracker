@@ -1,8 +1,7 @@
-import { TimeEntry } from '../types/EmployeeData';
+import { TimeEntry, Holidays } from '@/context/types';
 import { isSunday } from 'date-fns';
 import { calculateWorkHours } from './workHoursHelper';
 import { isRegularHoliday } from './holidayHelper';
-import Holidays from '@/types/Holidays';
 import { WorkTime } from '@/enums/WorkTime';
 
 /**

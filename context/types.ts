@@ -4,6 +4,12 @@ export type TimeEntry = {
   timeOut: string;
 };
 
+export type Holidays = {
+  regular: { dates: Set<string> };
+  specialNonWorkingHoliday: { dates: Set<string> };
+  specialWorkingHoliday: { dates: Set<string> };
+};
+
 export type Summary = {
   totalRegularWorkDays: number;
   totalSundayDays: number;
@@ -23,16 +29,10 @@ export type EmployeeData = {
   summary: Summary;
 };
 
-export type Location = {
+export type ProjectData = {
   location: string;
-};
-
-export type ProjectName = {
-  projectName: string;
-};
-
-export type Holidays = {
-  regular: { dates: Set<string> };
-  specialNonWorkingHoliday: { dates: Set<string> };
-  specialWorkingHoliday: { dates: Set<string> };
-};
+  projects: {
+    projectName: string;
+    employeeData: EmployeeData[];
+  }[];
+}[];
