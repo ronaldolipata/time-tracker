@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useTimeTracker } from '@/context/TimeTrackerContext';
+import { X } from 'lucide-react';
 import React from 'react';
 
 export default function ProjectsData() {
@@ -18,7 +19,7 @@ export default function ProjectsData() {
     const locationData = projectData.find((data) => data.projectLocation === projectLocation);
     if (!locationData) return false;
 
-    const project = locationData.projects.find((p) => p.name === name);
+    const project = locationData.projects.find((project) => project.projectName === name);
     return project?.employeeData && project.employeeData.length > 0;
   };
 
@@ -30,31 +31,47 @@ export default function ProjectsData() {
           <CardDescription>Show data by projectLocation and project name</CardDescription>
         </div>
         <div className='flex flex-col gap-4 rounded-md border'>
-          <Table className='text-center'>
+          <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className='pl-4'>Location</TableHead>
-                <TableHead className='text-center'>Project Name</TableHead>
-                <TableHead className='text-center'>Action</TableHead>
+                <TableHead className='py-4 px-3'>Location</TableHead>
+                <TableHead className='py-4 px-3'>Project Name</TableHead>
+                <TableHead className='py-4 px-3'>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {projectData.flatMap(({ projectLocation, projects }) =>
-                projects.map(({ name }) => (
-                  <TableRow key={`${projectLocation}-${name}`}>
-                    <TableCell className='pl-4 text-left'>{projectLocation}</TableCell>
-                    <TableCell className='p-2'>{name}</TableCell>
-                    <TableCell className='p-2'>
-                      <Button
-                        className={'focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'}
-                        onClick={() => handleCopy(projectLocation, name)}
-                        disabled={!hasEmployeeData(projectLocation, name)}
-                      >
-                        Copy data
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+              {projectData.length < 0 ? (
+                projectData.flatMap(({ projectLocation, projects }) =>
+                  projects.map(({ projectName }) => (
+                    <TableRow key={`${projectLocation}-${projectName}`}>
+                      <TableCell className='py-4 px-3'>{projectLocation}</TableCell>
+                      <TableCell className='py-4 px-3'>{projectName}</TableCell>
+                      <TableCell className='py-4 px-3'>
+                        <Button
+                          className={'focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'}
+                          onClick={() => handleCopy(projectLocation, projectName)}
+                          disabled={!hasEmployeeData(projectLocation, projectName)}
+                        >
+                          Copy data
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )
+              ) : (
+                <TableRow className='hover:bg-transparent'>
+                  <TableCell colSpan={5} className='h-60 text-center'>
+                    <div className='flex flex-col gap-2'>
+                      <div className='self-center p-2 bg-gray-100 rounded-full'>
+                        <X size={24} className='text-gray-400' />
+                      </div>
+                      <div className='flex flex-col'>
+                        <span className='text-xl font-medium'>No data</span>
+                        <span className='text-muted-foreground'>Insert time entries</span>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>

@@ -35,8 +35,8 @@ export default function DeleteDialog({
         <Trash className='mr-2' size={16} /> Delete
       </AlertDialogTrigger>
       <AlertDialogContent>
-        <AlertDialogHeader>
-          <div className='self-start p-2 bg-red-100 rounded-full'>
+        <AlertDialogHeader className='items-center lg:items-start'>
+          <div className='md:self-start p-2 bg-red-100 rounded-full'>
             <Trash size={24} className='text-red-400' />
           </div>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>

@@ -153,7 +153,7 @@ export default function Projects() {
                 <Search className='h-full w-5 absolute left-0 ml-2 opacity-40' />
                 <Input
                   type='text'
-                  className='min-h-8 pl-8 border cursor-pointer'
+                  className='min-h-8 pl-8 text-sm border cursor-pointer'
                   placeholder='Search project'
                   aria-label='Search projects'
                 />
