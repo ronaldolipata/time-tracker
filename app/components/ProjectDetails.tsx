@@ -6,11 +6,11 @@ import { useTimeTracker } from '@/context/TimeTrackerContext';
 
 export default function ProjectDetails() {
   const {
-    handleEnterProjectDetails,
+    handleCreateProject,
     handleClearProjectDetails,
-    location,
-    projectName,
-    setLocation,
+    projectLocation,
+    name,
+    setProjectLocation,
     setProjectName,
   } = useTimeTracker();
 
@@ -24,22 +24,22 @@ export default function ProjectDetails() {
         <Input
           type='text'
           className='w-full min-h-8 text-sm border cursor-pointer'
-          placeholder='Enter the project location'
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          placeholder='Enter the project projectLocation'
+          value={projectLocation}
+          onChange={(e) => setProjectLocation(e.target.value)}
         />
         <Input
           type='text'
           className='w-full min-h-8 text-sm border cursor-pointer'
           placeholder='Enter the project name'
-          value={projectName}
+          value={name}
           onChange={(e) => setProjectName(e.target.value)}
         />
         <div className='flex flex-col lg:flex-row gap-1'>
           <Button
             className='focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
-            onClick={() => handleEnterProjectDetails(location, projectName)}
-            disabled={!location || !projectName}
+            onClick={() => handleCreateProject(projectLocation, name)}
+            disabled={!projectLocation || !name}
           >
             Enter
           </Button>
@@ -47,7 +47,7 @@ export default function ProjectDetails() {
             className='cursor-pointer'
             variant={'secondary'}
             onClick={() => handleClearProjectDetails()}
-            disabled={!location || !projectName}
+            disabled={!projectLocation || !name}
           >
             Clear
           </Button>

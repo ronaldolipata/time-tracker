@@ -16,10 +16,13 @@ import { calculateSummary } from '@/helpers/calculateSummary';
 
 type TimeTrackerType = {
   // Project Details
-  location: string;
+  projectLocation: string;
+  projectStatus: string;
   projectName: string;
-  setLocation: Dispatch<SetStateAction<string>>;
+  setProjectLocation: Dispatch<SetStateAction<string>>;
   setProjectName: Dispatch<SetStateAction<string>>;
+  setProjectStatus: Dispatch<SetStateAction<string>>;
+  setProjectData: Dispatch<SetStateAction<ProjectData>>;
 
   // Selected Project Location, Name
   selectedLocation: string;
@@ -48,11 +51,15 @@ type TimeTrackerType = {
   setIsPayrollPeriodEnabled: Dispatch<SetStateAction<boolean>>;
 
   // Functions
-  handleEnterProjectDetails: (location: string, projectName: string) => void;
+  handleCreateProject: (
+    projectLocation: string,
+    projectName: string,
+    projectStatus: string
+  ) => boolean;
   handleClearProjectDetails: () => void;
   handleApplyDates: (startDate: string, endDate: string) => void;
   handlePaste: (event: React.ClipboardEvent<HTMLInputElement>) => void;
-  handleCopy: (location: string, projectName: string) => void;
+  handleCopy: (projectLocation: string, projectName: string) => void;
 
   projectData: ProjectData;
   employeeData: EmployeeData[];
@@ -62,10 +69,11 @@ const TimeTrackerContext = createContext<TimeTrackerType | undefined>(undefined)
 
 export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   // Project Details
-  const [location, setLocation] = useState<string>('');
+  const [projectLocation, setProjectLocation] = useState<string>('');
+  const [projectStatus, setProjectStatus] = useState<string>('enable');
   const [projectName, setProjectName] = useState<string>('');
 
-  // Track selected location and project
+  // Track selected projectLocation and project
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedProject, setSelectedProject] = useState<string>('');
 
@@ -98,65 +106,70 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     });
   }
 
-  function handleEnterProjectDetails(location: string, projectName: string): void {
-    if (!location || !projectName) {
-      toast.error('Please enter both location and project name');
-      return;
+  function handleCreateProject(
+    projectLocation: string,
+    projectName: string,
+    projectStatus: string
+  ): boolean {
+    if (!projectLocation || !projectName || !projectStatus) {
+      toast.error('Please enter project location, status, and name');
+      return false;
     }
 
-    let isUpdated = false; // Track if a valid update occurs
-
     setProjectData((prev) => {
-      // Check if the location already exists
+      // Check if the projectLocation already exists
       const existingLocationIndex = prev.findIndex(
-        (data) => data.location.toLowerCase() === location.toLowerCase()
+        (data) => data.projectLocation.toLowerCase() === projectLocation.toLowerCase()
       );
 
       if (existingLocationIndex !== -1) {
         const existingLocation = prev[existingLocationIndex];
 
-        // Check if the project already exists within that location
+        // Check if the project already exists within that projectLocation
         const existingProject = existingLocation.projects.find(
           (project) => project.projectName.toLowerCase() === projectName.toLowerCase()
         );
 
         if (existingProject) {
-          toast.error('Project name already exists for this location');
-          return prev; // Prevents state update
+          toast.error('Project name already exists for this projectLocation');
+          return prev; // No change to state
         }
 
-        // Add new project to existing location
+        // Add new project to existing projectLocation
         const updatedProjectData = [...prev];
         updatedProjectData[existingLocationIndex] = {
           ...existingLocation,
-          projects: [...existingLocation.projects, { projectName, employeeData: [] }],
+          projects: [
+            ...existingLocation.projects,
+            { projectName, projectStatus, employeeData: [] },
+          ],
         };
 
-        isUpdated = true; // Mark as updated
         return updatedProjectData;
       }
 
-      // If location does not exist, add new location with the project
-      isUpdated = true;
+      // If projectLocation does not exist, add new projectLocation with the project
       return [
         ...prev,
         {
-          location,
-          projects: [{ projectName, employeeData: [] }],
+          projectLocation,
+          projects: [{ projectName, projectStatus, employeeData: [] }],
         },
       ];
     });
 
-    // Only show success toast if an update occurred
-    if (isUpdated) {
-      toast.success('Successfully entered the project details');
-    }
+    // Show success toast after state update is initiated
+    // This will run only once regardless of which branch above was taken
+    setProjectLocation('');
+    setProjectName('');
+    toast.success('Project has been successfully created');
+    return true;
   }
 
   function handleClearProjectDetails(): void {
     setIsPayrollPeriodEnabled(false);
     setIsHolidaySelectionVisible(false);
-    setLocation('');
+    setProjectLocation('');
     setProjectName('');
     toast.success('Location and project name has been cleared');
   }
@@ -230,7 +243,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
 
     setProjectData((prev) => {
       const updatedData = prev.map((data) => {
-        if (data.location === selectedLocation) {
+        if (data.projectLocation === selectedLocation) {
           return {
             ...data,
             projects: data.projects.map((project) => {
@@ -256,19 +269,19 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   const formatValue = (value: number) => (value > 0 ? value.toFixed(2).replace(/\.00$/, '') : '');
 
   const handleCopy = useCallback(
-    (location: string, projectName: string) => {
-      // Find the relevant project data based on location and projectName
-      const locationData = projectData.find((data) => data.location === location);
+    (projectLocation: string, name: string) => {
+      // Find the relevant project data based on projectLocation and name
+      const locationData = projectData.find((data) => data.projectLocation === projectLocation);
 
       if (!locationData) {
-        toast.error(`Location "${location}" not found`);
+        toast.error(`Location "${projectLocation}" not found`);
         return;
       }
 
-      const project = locationData.projects.find((project) => project.projectName === projectName);
+      const project = locationData.projects.find((project) => project.projectName === name);
 
       if (!project) {
-        toast.error(`Project "${projectName}" not found in location "${location}"`);
+        toast.error(`Project "${name}" not found in projectLocation "${projectLocation}"`);
         return;
       }
 
@@ -299,7 +312,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         .join('\n');
 
       navigator.clipboard.writeText(data);
-      toast.success(`Copied data for ${projectName} in ${location} to clipboard!`);
+      toast.success(`Copied data for ${name} in ${projectLocation} to clipboard!`);
     },
     [projectData]
   );
@@ -308,10 +321,13 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     <TimeTrackerContext.Provider
       value={{
         // Project Details
-        location,
+        projectLocation,
         projectName,
-        setLocation,
+        projectStatus,
+        setProjectLocation,
         setProjectName,
+        setProjectStatus,
+        setProjectData,
 
         // Selected Project Location, Name
         selectedLocation,
@@ -340,7 +356,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         setIsPayrollPeriodEnabled,
 
         // Functions
-        handleEnterProjectDetails,
+        handleCreateProject,
         handleClearProjectDetails,
         handleApplyDates,
         handlePaste,
