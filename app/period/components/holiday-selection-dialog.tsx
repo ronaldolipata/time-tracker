@@ -1,8 +1,8 @@
-import DayColorIndicator from '@/components/day-color-indicator';
+import { useState, useEffect } from 'react';
+import { useTimeTracker } from '@/context/time-tracker-context';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -18,27 +18,41 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useTimeTracker } from '@/context/time-tracker-context';
-import { Holidays } from '@/context/types';
+import DayColorIndicator from '@/components/day-color-indicator';
 import { getTableRowBackgroundClass } from '@/helpers/get-table-row-background-class';
 import { formatDate } from '@/utils/format-date';
-import React from 'react';
+import { Holidays } from '@/context/types';
 
 export default function HolidaySelectionDialog() {
   const {
     startDate,
     endDate,
     dates,
-    isPayrollPeriodEnabled,
-    setHolidays,
     holidays,
-    setIsTimeEntriesEnabled,
-    setIsHolidaySelectionVisible,
+    setHolidays,
     handleApplyDates,
+    setIsHolidaySelectionVisible,
   } = useTimeTracker();
+  const [tempHolidays, setTempHolidays] = useState<Holidays>({
+    regular: { dates: new Set() },
+    specialNonWorkingHoliday: { dates: new Set() },
+    specialWorkingHoliday: { dates: new Set() },
+  });
+  const [open, setOpen] = useState(false);
+
+  // Initialize temporary holidays when dialog opens
+  useEffect(() => {
+    if (open) {
+      setTempHolidays({
+        regular: { dates: new Set(holidays.regular.dates) },
+        specialNonWorkingHoliday: { dates: new Set(holidays.specialNonWorkingHoliday.dates) },
+        specialWorkingHoliday: { dates: new Set(holidays.specialWorkingHoliday.dates) },
+      });
+    }
+  }, [open, holidays]);
 
   function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
-    setHolidays((prev) => {
+    setTempHolidays((prev) => {
       const updatedHolidays: Holidays = {
         regular: { dates: new Set(prev.regular.dates) },
         specialNonWorkingHoliday: { dates: new Set(prev.specialNonWorkingHoliday.dates) },
@@ -69,13 +83,14 @@ export default function HolidaySelectionDialog() {
     });
   }
 
-  function handleSetShowTimeEntries(): void {
-    setIsTimeEntriesEnabled(true);
-    setIsHolidaySelectionVisible(false);
+  function handleApply() {
+    setHolidays(tempHolidays);
+    setOpen(false);
+    setIsHolidaySelectionVisible(true);
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           className='lg:self-end focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
@@ -85,7 +100,6 @@ export default function HolidaySelectionDialog() {
               handleApplyDates(startDate, endDate);
             }
           }}
-          disabled={isPayrollPeriodEnabled && startDate && endDate ? false : true}
         >
           Apply
         </Button>
@@ -107,12 +121,12 @@ export default function HolidaySelectionDialog() {
             </TableHeader>
             <TableBody>
               {dates.map((date) => (
-                <TableRow key={date} className={getTableRowBackgroundClass(date, holidays)}>
+                <TableRow key={date} className={getTableRowBackgroundClass(date, tempHolidays)}>
                   <TableCell className='pl-4'>{formatDate(date)}</TableCell>
                   <TableCell className='p-2 text-center'>
                     <Input
                       type='checkbox'
-                      checked={holidays.regular.dates.has(date)}
+                      checked={tempHolidays.regular.dates.has(date)}
                       onChange={() => handleHolidayCheckboxChange(date, 'regular')}
                       className='h-6 shadow-none'
                     />
@@ -120,7 +134,7 @@ export default function HolidaySelectionDialog() {
                   <TableCell className='p-2 text-center'>
                     <Input
                       type='checkbox'
-                      checked={holidays.specialNonWorkingHoliday.dates.has(date)}
+                      checked={tempHolidays.specialNonWorkingHoliday.dates.has(date)}
                       onChange={() => handleHolidayCheckboxChange(date, 'specialNonWorkingHoliday')}
                       className='h-6 shadow-none'
                     />
@@ -128,7 +142,7 @@ export default function HolidaySelectionDialog() {
                   <TableCell className='p-2 text-center'>
                     <Input
                       type='checkbox'
-                      checked={holidays.specialWorkingHoliday.dates.has(date)}
+                      checked={tempHolidays.specialWorkingHoliday.dates.has(date)}
                       onChange={() => handleHolidayCheckboxChange(date, 'specialWorkingHoliday')}
                       className='h-6 shadow-none'
                     />
@@ -139,14 +153,9 @@ export default function HolidaySelectionDialog() {
           </Table>
         </div>
         <DialogFooter className='sm:justify-end'>
-          <DialogClose asChild>
-            <Button
-              className='self-end focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
-              onClick={handleSetShowTimeEntries}
-            >
-              Proceed to time entries
-            </Button>
-          </DialogClose>
+          <Button className='self-end cursor-pointer' onClick={handleApply}>
+            Apply
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

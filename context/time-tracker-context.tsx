@@ -9,7 +9,7 @@ import {
   Dispatch,
   SetStateAction,
 } from 'react';
-import { EmployeeData, Holidays, ProjectData, TimeEntry } from './types';
+import { EmployeeData, Holidays, PayrollPeriod, ProjectData, TimeEntry } from './types';
 import { toast } from 'react-toastify';
 import { addDays, format } from 'date-fns';
 import { calculateSummary } from '@/helpers/calculate-summary';
@@ -24,17 +24,20 @@ type TimeTrackerType = {
   setProjectStatus: Dispatch<SetStateAction<string>>;
   setProjectData: Dispatch<SetStateAction<ProjectData>>;
 
-  // Selected Project Location, Name
+  // Selected data
+  selectedPayrollPeriod: PayrollPeriod;
   selectedLocation: string;
   selectedProject: string;
+  setSelectedPayrollPeriod: Dispatch<SetStateAction<PayrollPeriod>>;
   setSelectedLocation: Dispatch<SetStateAction<string>>;
   setSelectedProject: Dispatch<SetStateAction<string>>;
 
-  // Payroll Period
+  // Payroll period
   startDate: string;
   endDate: string;
   setStartDate: Dispatch<SetStateAction<string>>;
   setEndDate: Dispatch<SetStateAction<string>>;
+  payrollPeriod: PayrollPeriod[];
 
   // Holidays
   dates: string[];
@@ -42,10 +45,12 @@ type TimeTrackerType = {
   setHolidays: Dispatch<SetStateAction<Holidays>>;
 
   // UI
+  isSelectProjectEnabled: boolean;
   isHolidaySelectionVisible: boolean;
   isAttendanceTableVisible: boolean;
   isTimeEntriesEnabled: boolean;
   isPayrollPeriodEnabled: boolean;
+  setIsSelectProjectEnabled: Dispatch<SetStateAction<boolean>>;
   setIsTimeEntriesEnabled: Dispatch<SetStateAction<boolean>>;
   setIsHolidaySelectionVisible: Dispatch<SetStateAction<boolean>>;
   setIsPayrollPeriodEnabled: Dispatch<SetStateAction<boolean>>;
@@ -73,15 +78,20 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   const [projectStatus, setProjectStatus] = useState<string>('enabled');
   const [projectName, setProjectName] = useState<string>('');
 
-  // Track selected projectLocation and project
+  // Track selected data
+  const [selectedPayrollPeriod, setSelectedPayrollPeriod] = useState<PayrollPeriod>({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedProject, setSelectedProject] = useState<string>('');
 
   const [projectData, setProjectData] = useState<ProjectData>([]);
 
-  // Payroll Period
+  // Payroll period
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+  const [payrollPeriod, setPayrollPeriod] = useState<PayrollPeriod[]>([]);
 
   // Holidays
   const [dates, setDates] = useState<string[]>([]);
@@ -92,6 +102,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   });
 
   // UI
+  const [isSelectProjectEnabled, setIsSelectProjectEnabled] = useState<boolean>(false);
   const [isPayrollPeriodEnabled, setIsPayrollPeriodEnabled] = useState<boolean>(false);
   const [isHolidaySelectionVisible, setIsHolidaySelectionVisible] = useState<boolean>(false);
   const [isTimeEntriesEnabled, setIsTimeEntriesEnabled] = useState<boolean>(false);
@@ -163,6 +174,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     if (isProjectAdded) {
       setProjectLocation('');
       setProjectName('');
+      toast.success('Successfully created');
     }
 
     return isProjectAdded;
@@ -186,10 +198,10 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     const end = new Date(endDate);
 
     // @TODO: Handle start and end dates to have a valid payroll period
-    setDates(getDatesInRange(start, end));
-    setIsAttendanceTableVisible(false);
-    setIsTimeEntriesEnabled(false);
-    toast.success('Payroll period has been successfully applied');
+    setDates(getDatesInRange(start, end)); // Used to apply the dates for employee's data
+    setPayrollPeriod((prev) => [...prev, { startDate: start, endDate: end }]); // Used for displaying payroll period
+    setStartDate('');
+    setEndDate('');
   }
 
   function getDatesInRange(start: Date, end: Date): string[] {
@@ -221,8 +233,8 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   function handlePaste(event: React.ClipboardEvent<HTMLInputElement>) {
     event.preventDefault();
 
-    if (!startDate || !endDate) {
-      toast.error('Please select a date range before pasting data');
+    if (payrollPeriod.length < 0) {
+      toast.error('Please select a payroll period before pasting time entries');
       return;
     }
 
@@ -331,17 +343,20 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         setProjectStatus,
         setProjectData,
 
-        // Selected Project Location, Name
+        // Selected data
+        selectedPayrollPeriod,
         selectedLocation,
         selectedProject,
+        setSelectedPayrollPeriod,
         setSelectedLocation,
         setSelectedProject,
 
-        // Payroll Period
+        // Payroll period
         startDate,
         endDate,
         setStartDate,
         setEndDate,
+        payrollPeriod,
 
         // Holidays
         dates,
@@ -349,10 +364,12 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         setHolidays,
 
         // UI
+        isSelectProjectEnabled,
         isHolidaySelectionVisible,
         isAttendanceTableVisible,
         isTimeEntriesEnabled,
         isPayrollPeriodEnabled,
+        setIsSelectProjectEnabled,
         setIsTimeEntriesEnabled,
         setIsHolidaySelectionVisible,
         setIsPayrollPeriodEnabled,
