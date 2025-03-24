@@ -29,11 +29,11 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className='min-h-screen flex flex-col'>
-          <div className='flex-grow'>
-            <div className='2xl:w-[100rem] lg:mx-auto'>
-              <div className='w-full px-5 md:px-8 mx-auto'>
-                <TimeTrackerProvider>
+        <TimeTrackerProvider>
+          <div className='min-h-screen flex flex-col'>
+            <div className='flex-grow'>
+              <div className='2xl:w-[100rem] lg:mx-auto'>
+                <div className='w-full px-5 md:px-8 mx-auto'>
                   <SidebarProvider>
                     <AppSidebar />
                     <main className='w-full'>
@@ -41,11 +41,11 @@ export default function RootLayout({
                       {children}
                     </main>
                   </SidebarProvider>
-                </TimeTrackerProvider>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </TimeTrackerProvider>
       </body>
     </html>
   );

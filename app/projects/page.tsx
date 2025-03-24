@@ -116,8 +116,6 @@ export default function Projects() {
 
   // Memoize this calculation to avoid recalculating on every render
   const isAllSelected = totalProjects > 0 && selectedProjects.length === totalProjects;
-  const isPartiallySelected =
-    selectedProjects.length > 0 && selectedProjects.length < totalProjects;
 
   return (
     <>
@@ -200,7 +198,6 @@ export default function Projects() {
                   <Checkbox
                     id='select-all-checkbox'
                     checked={isAllSelected}
-                    indeterminate={isPartiallySelected}
                     onCheckedChange={(checked) => {
                       if (checked) {
                         handleSelectAll();
