@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/table';
 import { useTimeTracker } from '@/context/TimeTrackerContext';
 import { X } from 'lucide-react';
-import React, { useEffect } from 'react';
 
 export default function ProjectsData() {
   const { projectData, handleCopy } = useTimeTracker();
@@ -22,10 +21,6 @@ export default function ProjectsData() {
     const project = locationData.projects.find((project) => project.projectName === name);
     return project?.employeeData && project.employeeData.length > 0;
   };
-
-  useEffect(() => {
-    console.log(projectData);
-  }, [projectData]);
 
   return (
     <div>
