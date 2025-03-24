@@ -1,4 +1,4 @@
-import DayColorIndicator from '@/components/DayColorIndicator';
+import DayColorIndicator from '@/components/day-color-indicator';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -18,10 +18,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useTimeTracker } from '@/context/TimeTrackerContext';
+import { useTimeTracker } from '@/context/time-tracker-context';
 import { Holidays } from '@/context/types';
-import { getTableRowBackgroundClass } from '@/helpers/getTableRowBackgroundClass';
-import { formatDate } from '@/utils/formatDate';
+import { getTableRowBackgroundClass } from '@/helpers/get-table-row-background-class';
+import { formatDate } from '@/utils/format-date';
 import React from 'react';
 
 export default function HolidaySelectionDialog() {

@@ -1,6 +1,6 @@
 import { Holidays } from '@/context/types';
-import { isHolidayDay } from '@/utils/isHolidayDay';
-import { isSundayDay } from '@/utils/isSundayDay';
+import { isHolidayDay } from '@/utils/is-holiday-day';
+import { isSundayDay } from '@/utils/is-sunday-day';
 
 export function getTableRowBackgroundClass(date: string, holidays: Holidays): string {
   const isSunday = isSundayDay(date);

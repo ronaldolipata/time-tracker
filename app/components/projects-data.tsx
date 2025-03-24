@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useTimeTracker } from '@/context/TimeTrackerContext';
+import { useTimeTracker } from '@/context/time-tracker-context';
 import { Copy, X } from 'lucide-react';
 
 export default function ProjectsData() {

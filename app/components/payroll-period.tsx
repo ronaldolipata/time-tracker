@@ -1,8 +1,8 @@
 import { Card, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useTimeTracker } from '@/context/TimeTrackerContext';
+import { useTimeTracker } from '@/context/time-tracker-context';
 import React from 'react';
-import HolidaySelectionDialog from './HolidaySelectionDialog';
+import HolidaySelectionDialog from './holiday-selection-dialog';
 import { Label } from '@/components/ui/label';
 
 export default function PayrollPeriod() {

@@ -2,10 +2,10 @@
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import SelectProject from './components/SelectProject';
-import PayrollPeriod from './components/PayrollPeriod';
-import TimeEntries from './components/TimeEntries';
-import ProjectsData from './components/ProjectsData';
+import SelectProject from './components/select-project';
+import PayrollPeriod from './components/payroll-period';
+import TimeEntries from './components/time-entries';
+import ProjectsData from './components/projects-data';
 
 export default function Home() {
   return (

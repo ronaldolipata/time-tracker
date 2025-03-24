@@ -2,7 +2,7 @@ import {
   isRegularHoliday,
   isSpecialNonWorkingHoliday,
   isSpecialWorkingHoliday,
-} from '@/helpers/holidayHelper';
+} from '@/helpers/holiday-helper';
 import { Holidays } from '@/context/types';
 
 export function isHolidayDay(date: string, holidays: Holidays) {

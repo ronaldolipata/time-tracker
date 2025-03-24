@@ -1,6 +1,6 @@
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useTimeTracker } from '@/context/TimeTrackerContext';
+import { useTimeTracker } from '@/context/time-tracker-context';
 import React from 'react';
 
 export default function TimeEntries() {
