@@ -70,7 +70,7 @@ const TimeTrackerContext = createContext<TimeTrackerType | undefined>(undefined)
 export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   // Project Details
   const [projectLocation, setProjectLocation] = useState<string>('');
-  const [projectStatus, setProjectStatus] = useState<string>('enable');
+  const [projectStatus, setProjectStatus] = useState<string>('enabled');
   const [projectName, setProjectName] = useState<string>('');
 
   // Track selected projectLocation and project

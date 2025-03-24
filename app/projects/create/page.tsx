@@ -90,17 +90,17 @@ export default function Create() {
                 Status <span className='text-red-600'>*</span>
               </Label>
               <RadioGroup
-                defaultValue='enable'
+                defaultValue='enabled'
                 className='flex'
                 onValueChange={(value) => setProjectStatus(value)}
               >
                 <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='enable' id='enable' />
-                  <Label htmlFor='enable'>Enable</Label>
+                  <RadioGroupItem value='enabled' id='enabled' />
+                  <Label htmlFor='enabled'>Enabled</Label>
                 </div>
                 <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='disable' id='disable' />
-                  <Label htmlFor='disable'>Disable</Label>
+                  <RadioGroupItem value='disabled' id='disabled' />
+                  <Label htmlFor='disabled'>Disabled</Label>
                 </div>
               </RadioGroup>
             </div>

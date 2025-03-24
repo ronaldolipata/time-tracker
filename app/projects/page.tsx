@@ -236,9 +236,11 @@ export default function Projects() {
                           />
                         </TableCell>
                         <TableCell className='py-4 px-3'>{projectLocation}</TableCell>
-                        <TableCell className='p-2'>{projectName}</TableCell>
-                        <TableCell className='first-letter:uppercase p-2'>
-                          {projectStatus}
+                        <TableCell className='py-4 px-3'>{projectName}</TableCell>
+                        <TableCell className='first-letter:uppercase py-4 px-3'>
+                          <span className='px-3 py-[3px] bg-green-100 text-green-600 rounded-full'>
+                            {projectStatus}
+                          </span>
                         </TableCell>
                         <TableCell className='p-2'>
                           <div className='flex items-center justify-center gap-4 font-medium text-center'>
