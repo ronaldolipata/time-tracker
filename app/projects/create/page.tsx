@@ -31,9 +31,7 @@ export default function Create() {
 
     if (success) {
       // App Router uses searchParams via URL construction
-      router.push(
-        `/projects?success=${encodeURIComponent('Project has been successfully created')}`
-      );
+      router.push(`/projects?success=${encodeURIComponent('Successfully created')}`);
     }
   }
 

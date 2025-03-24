@@ -112,7 +112,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     projectStatus: string
   ): boolean {
     if (!projectLocation || !projectName || !projectStatus) {
-      toast.error('Please enter project location, status, and name');
+      toast.error('Please the required details');
       return false;
     }
 
@@ -131,7 +131,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         );
 
         if (existingProject) {
-          toast.error('Project name already exists for this project location');
+          toast.error('Name already exists for the location');
           return prev; // No changes, return existing state
         }
 
@@ -163,7 +163,6 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     if (isProjectAdded) {
       setProjectLocation('');
       setProjectName('');
-      toast.success('Project has been successfully created');
     }
 
     return isProjectAdded;
