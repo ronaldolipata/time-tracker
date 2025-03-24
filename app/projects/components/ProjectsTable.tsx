@@ -98,6 +98,7 @@ export default function ProjectsTable() {
             {
               projectName: project.projectName,
               projectStatus: project.projectStatus,
+              employeeData: project.employeeData,
             },
           ],
         });
@@ -105,6 +106,7 @@ export default function ProjectsTable() {
         groupedProjects[locationIndex].projects.push({
           projectName: project.projectName,
           projectStatus: project.projectStatus,
+          employeeData: project.employeeData,
         });
       }
     });
