@@ -1,3 +1,4 @@
+import { useTimeTracker } from '@/context/time-tracker-context';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import {
   Select,
@@ -6,17 +7,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useTimeTracker } from '@/context/time-tracker-context';
 import { Button } from '@/components/ui/button';
 
 export default function SelectProject() {
   const {
     projectData,
+    selectedPayrollPeriod,
     selectedLocation,
     selectedProject,
     setSelectedLocation,
     setSelectedProject,
-    setIsPayrollPeriodEnabled,
+    setIsTimeEntriesEnabled,
   } = useTimeTracker();
 
   // Find projects based on the selected projectLocation
@@ -24,7 +25,7 @@ export default function SelectProject() {
     projectData.find((data) => data.projectLocation === selectedLocation)?.projects || [];
 
   function handleSelectedProject() {
-    setIsPayrollPeriodEnabled(true);
+    if (selectedPayrollPeriod && selectedLocation && selectedProject) setIsTimeEntriesEnabled(true);
   }
 
   return (
@@ -67,7 +68,7 @@ export default function SelectProject() {
           disabled={!selectedLocation || !selectedProject}
           onClick={handleSelectedProject}
         >
-          Select
+          {!projectData.length ? 'Please create a project first' : 'Select'}
         </Button>
       </div>
     </Card>

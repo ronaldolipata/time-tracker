@@ -1,4 +1,4 @@
-import { Home, FileText } from 'lucide-react';
+import { Home, FileText, Calendar } from 'lucide-react';
 
 import {
   Sidebar,
@@ -22,6 +22,11 @@ const items = [
     title: 'Projects',
     url: '/projects',
     icon: FileText,
+  },
+  {
+    title: 'Period',
+    url: '/period',
+    icon: Calendar,
   },
 ];
 

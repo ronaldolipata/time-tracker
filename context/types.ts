@@ -1,3 +1,8 @@
+export type PayrollPeriod = {
+  startDate: Date;
+  endDate: Date;
+};
+
 export type TimeEntry = {
   date: string;
   timeIn: string;
