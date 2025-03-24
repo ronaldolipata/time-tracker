@@ -1,6 +1,6 @@
-import { useState, MouseEventHandler } from 'react';
+import { useState, MouseEventHandler, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, SquarePen, Trash } from 'lucide-react';
+import { Search, SquarePen, Trash, ArrowUpDown, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,16 +19,117 @@ import { ProjectData } from '@/context/types';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+type SortDirection = 'asc' | 'desc' | null;
+type SortField = 'location' | 'name' | null;
+
 export default function ProjectsTable() {
   const { projectData, setProjectData } = useTimeTracker();
-
-  // Calculate total number of projects
-  const totalProjects = projectData
-    ? projectData.reduce((sum, location) => sum + location.projects.length, 0)
-    : 0;
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [sortField, setSortField] = useState<SortField>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
 
   // State for selected projects - using a properly typed state
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
+
+  // Function to handle sorting
+  const handleSort = (field: SortField) => {
+    // If clicking on the same field, cycle through: asc -> desc -> null
+    if (sortField === field) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortField(null);
+        setSortDirection(null);
+      }
+    } else {
+      // If clicking on a new field, start with ascending sort
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  // Process and filter project data based on search and sorting
+  const processedProjectData = useMemo(() => {
+    if (!projectData || projectData.length === 0) return [];
+
+    // First, flatten the project data for easier processing
+    const flattenedProjects = projectData.flatMap((location) =>
+      location.projects.map((project) => ({
+        projectLocation: location.projectLocation,
+        ...project,
+        id: `${location.projectLocation}-${project.projectName}`,
+      }))
+    );
+
+    // Filter by search term
+    const filteredProjects = searchTerm
+      ? flattenedProjects.filter((project) =>
+          project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : flattenedProjects;
+
+    // Sort by selected field and direction
+    if (sortField && sortDirection) {
+      filteredProjects.sort((a, b) => {
+        let comparison = 0;
+
+        if (sortField === 'location') {
+          comparison = a.projectLocation.localeCompare(b.projectLocation);
+        } else if (sortField === 'name') {
+          comparison = a.projectName.localeCompare(b.projectName);
+        }
+
+        return sortDirection === 'asc' ? comparison : -comparison;
+      });
+    }
+
+    // Group back by location for rendering
+    const groupedProjects: ProjectData = [];
+
+    filteredProjects.forEach((project) => {
+      const locationIndex = groupedProjects.findIndex(
+        (loc) => loc.projectLocation === project.projectLocation
+      );
+
+      if (locationIndex === -1) {
+        groupedProjects.push({
+          projectLocation: project.projectLocation,
+          projects: [
+            {
+              projectName: project.projectName,
+              projectStatus: project.projectStatus,
+            },
+          ],
+        });
+      } else {
+        groupedProjects[locationIndex].projects.push({
+          projectName: project.projectName,
+          projectStatus: project.projectStatus,
+        });
+      }
+    });
+
+    return groupedProjects;
+  }, [projectData, searchTerm, sortField, sortDirection]);
+
+  // Calculate total number of filtered projects and whether records were found
+  const totalFilteredProjects = useMemo(
+    () => processedProjectData.reduce((sum, location) => sum + location.projects.length, 0),
+    [processedProjectData]
+  );
+
+  // Determine if records are found based on search and data
+  const isRecordsFound = totalFilteredProjects > 0;
+
+  // Reset selected projects when search term changes
+  useEffect(() => {
+    setSelectedProjects([]);
+  }, [searchTerm]);
+
+  // Function to clear search term
+  const clearSearch = () => {
+    setSearchTerm('');
+  };
 
   // Function to handle individual checkbox selection
   function handleSelectProject(projectId: string): void {
@@ -38,8 +139,8 @@ export default function ProjectsTable() {
   }
 
   function handleSelectAll(): void {
-    if (projectData && projectData.length > 0) {
-      const allProjectIds = projectData.flatMap((location) =>
+    if (processedProjectData && processedProjectData.length > 0) {
+      const allProjectIds = processedProjectData.flatMap((location) =>
         location.projects.map((project) => `${location.projectLocation}-${project.projectName}`)
       );
       setSelectedProjects(allProjectIds);
@@ -95,7 +196,14 @@ export default function ProjectsTable() {
   }
 
   // Memoize this calculation to avoid recalculating on every render
-  const isAllSelected = totalProjects > 0 && selectedProjects.length === totalProjects;
+  const isAllSelected =
+    totalFilteredProjects > 0 && selectedProjects.length === totalFilteredProjects;
+
+  // Helper function to get sort icon state
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) return 'text-gray-400';
+    return sortDirection === 'asc' ? 'text-blue-600 rotate-0' : 'text-blue-600 rotate-180';
+  };
 
   return (
     <div className='rounded-md border'>
@@ -115,14 +223,27 @@ export default function ProjectsTable() {
           )}
         </div>
         <div className='relative'>
-          <div>
+          <div className='relative'>
             <Search className='h-full w-5 absolute left-0 ml-2 opacity-40' />
-            <Input
-              type='text'
-              className='min-h-8 pl-8 text-sm border cursor-pointer'
-              placeholder='Search project'
-              aria-label='Search projects'
-            />
+            <div className='flex'>
+              <Input
+                type='text'
+                className='min-h-8 pl-8 pr-8 text-sm border cursor-pointer'
+                placeholder='Search project'
+                aria-label='Search projects'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  className='h-full w-6 absolute right-0 mr-0 opacity-60 hover:opacity-100 cursor-pointer'
+                  onClick={clearSearch}
+                  aria-label='Clear search'
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -135,6 +256,11 @@ export default function ProjectsTable() {
               {selectedProjects.length} project(s) selected
             </span>
           )}
+          {searchTerm && (
+            <span className='font-medium ml-2' aria-live='polite'>
+              {totalFilteredProjects} project(s) found
+            </span>
+          )}
         </div>
         <div className='flex gap-3'>
           <Button
@@ -142,9 +268,10 @@ export default function ProjectsTable() {
             size='sm'
             onClick={handleSelectAll}
             className='text-sm cursor-pointer'
-            aria-label={`Select all ${totalProjects} projects`}
+            aria-label={`Select all ${totalFilteredProjects} projects`}
+            disabled={totalFilteredProjects === 0}
           >
-            Select all {totalProjects}
+            Select all {totalFilteredProjects}
           </Button>
           <Button
             variant='ghost'
@@ -174,17 +301,50 @@ export default function ProjectsTable() {
                   }
                 }}
                 aria-label={isAllSelected ? 'Deselect all projects' : 'Select all projects'}
+                disabled={totalFilteredProjects === 0}
               />
             </TableHead>
-            <TableHead className='py-4 px-3'>Location</TableHead>
-            <TableHead className='py-4 px-3'>Name</TableHead>
+            <TableHead className='py-4 px-3'>
+              <div
+                className='flex items-center cursor-pointer'
+                onClick={() => handleSort('location')}
+                role='button'
+                tabIndex={0}
+                aria-label={`Sort by location ${
+                  sortField === 'location' && sortDirection === 'asc' ? 'descending' : 'ascending'
+                }`}
+              >
+                Location
+                <ArrowUpDown
+                  size={16}
+                  className={`ml-1 transition-transform ${getSortIcon('location')}`}
+                />
+              </div>
+            </TableHead>
+            <TableHead className='py-4 px-3'>
+              <div
+                className='flex items-center cursor-pointer'
+                onClick={() => handleSort('name')}
+                role='button'
+                tabIndex={0}
+                aria-label={`Sort by name ${
+                  sortField === 'name' && sortDirection === 'asc' ? 'descending' : 'ascending'
+                }`}
+              >
+                Name
+                <ArrowUpDown
+                  size={16}
+                  className={`ml-1 transition-transform ${getSortIcon('name')}`}
+                />
+              </div>
+            </TableHead>
             <TableHead className='py-4 px-3'>Status</TableHead>
             <TableHead className='py-4 px-3 text-center'>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {projectData && projectData.length > 0 ? (
-            projectData.flatMap(({ projectLocation, projects }) =>
+          {isRecordsFound ? (
+            processedProjectData.flatMap(({ projectLocation, projects }) =>
               projects.map(({ projectStatus, projectName }, subIndex) => {
                 const projectId = `${projectLocation}-${projectName}`;
                 return (
@@ -230,8 +390,19 @@ export default function ProjectsTable() {
             )
           ) : (
             <NoTableRecord
-              title='No projects'
-              description={{ message: 'Create a new project', href: '/projects/create' }}
+              title={searchTerm ? 'No matching projects' : 'No projects'}
+              description={{
+                message: searchTerm ? 'Try searching different name' : 'Create a new project',
+                messageLink: searchTerm
+                  ? {
+                      linkText: '',
+                      href: '',
+                    }
+                  : {
+                      linkText: 'here',
+                      href: '/projects/create',
+                    },
+              }}
             />
           )}
         </TableBody>

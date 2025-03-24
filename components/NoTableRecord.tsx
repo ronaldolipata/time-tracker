@@ -2,9 +2,14 @@ import { TableCell, TableRow } from './ui/table';
 import { X } from 'lucide-react';
 import Link from 'next/link';
 
+interface MeesageLink {
+  linkText: string;
+  href: string;
+}
+
 interface Description {
   message: string;
-  href: string;
+  messageLink?: MeesageLink;
 }
 
 interface NoTableRecordProps {
@@ -25,9 +30,14 @@ export default function NoTableRecord({ title, description }: NoTableRecordProps
             {description && (
               <span className='text-muted-foreground'>
                 {description.message}{' '}
-                <Link className='text-blue-400 cursor-pointer' href={description.href}>
-                  here
-                </Link>
+                {description.messageLink && (
+                  <Link
+                    className='text-blue-400 cursor-pointer'
+                    href={description.messageLink.href}
+                  >
+                    {description.messageLink.linkText}
+                  </Link>
+                )}
               </span>
             )}
           </div>
