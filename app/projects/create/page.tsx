@@ -22,7 +22,6 @@ export default function Create() {
     setProjectLocation,
     setProjectStatus,
     setProjectName,
-    projectData,
   } = useTimeTracker();
   const router = useRouter();
 
@@ -34,10 +33,6 @@ export default function Create() {
       router.push(`/projects?success=${encodeURIComponent('Successfully created')}`);
     }
   }
-
-  useEffect(() => {
-    console.log(projectData);
-  }, [projectData]);
 
   return (
     <>
