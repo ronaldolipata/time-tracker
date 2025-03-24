@@ -9,7 +9,6 @@ import { CustomLink } from '@/components/CustomLink';
 import { DynamicBreadcrumbs } from '@/components/DynamicBreadcrumbs';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Label } from '@/components/ui/label';
 
