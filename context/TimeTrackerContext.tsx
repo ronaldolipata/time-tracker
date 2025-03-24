@@ -116,8 +116,9 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       return false;
     }
 
+    let isProjectAdded = false; // Track if a project was actually added
+
     setProjectData((prev) => {
-      // Check if the projectLocation already exists
       const existingLocationIndex = prev.findIndex(
         (data) => data.projectLocation.toLowerCase() === projectLocation.toLowerCase()
       );
@@ -125,14 +126,13 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       if (existingLocationIndex !== -1) {
         const existingLocation = prev[existingLocationIndex];
 
-        // Check if the project already exists within that projectLocation
         const existingProject = existingLocation.projects.find(
           (project) => project.projectName.toLowerCase() === projectName.toLowerCase()
         );
 
         if (existingProject) {
-          toast.error('Project name already exists for this projectLocation');
-          return prev; // No change to state
+          toast.error('Project name already exists for this project location');
+          return prev; // No changes, return existing state
         }
 
         // Add new project to existing projectLocation
@@ -145,10 +145,12 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
           ],
         };
 
+        isProjectAdded = true;
         return updatedProjectData;
       }
 
-      // If projectLocation does not exist, add new projectLocation with the project
+      // Add new projectLocation with the project
+      isProjectAdded = true;
       return [
         ...prev,
         {
@@ -158,12 +160,13 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       ];
     });
 
-    // Show success toast after state update is initiated
-    // This will run only once regardless of which branch above was taken
-    setProjectLocation('');
-    setProjectName('');
-    toast.success('Project has been successfully created');
-    return true;
+    if (isProjectAdded) {
+      setProjectLocation('');
+      setProjectName('');
+      toast.success('Project has been successfully created');
+    }
+
+    return isProjectAdded;
   }
 
   function handleClearProjectDetails(): void {
