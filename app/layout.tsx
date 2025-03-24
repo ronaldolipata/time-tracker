@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { TimeTrackerProvider } from '@/context/TimeTrackerContext';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/ui/app-sidebar';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,15 +29,23 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className='min-h-screen flex flex-col'>
-          <div className='flex-grow'>
-            <div className='2xl:w-[100rem] lg:mx-auto'>
-              <div className='w-full px-5 md:px-8 mx-auto'>
-                <TimeTrackerProvider>{children}</TimeTrackerProvider>
+        <TimeTrackerProvider>
+          <div className='min-h-screen flex flex-col'>
+            <div className='flex-grow'>
+              <div className='2xl:w-[100rem] lg:mx-auto'>
+                <div className='w-full px-5 md:px-8 mx-auto'>
+                  <SidebarProvider>
+                    <AppSidebar />
+                    <main className='w-full'>
+                      <SidebarTrigger />
+                      {children}
+                    </main>
+                  </SidebarProvider>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </TimeTrackerProvider>
       </body>
     </html>
   );

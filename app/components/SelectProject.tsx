@@ -19,9 +19,9 @@ export default function SelectProject() {
     setIsPayrollPeriodEnabled,
   } = useTimeTracker();
 
-  // Find projects based on the selected location
+  // Find projects based on the selected projectLocation
   const filteredProjects =
-    projectData.find((data) => data.location === selectedLocation)?.projects || [];
+    projectData.find((data) => data.projectLocation === selectedLocation)?.projects || [];
 
   function handleSelectedProject() {
     setIsPayrollPeriodEnabled(true);
@@ -40,12 +40,12 @@ export default function SelectProject() {
           onValueChange={(value) => setSelectedLocation(value)}
         >
           <SelectTrigger className='w-full'>
-            <SelectValue placeholder='Select location' />
+            <SelectValue placeholder='Select project location' />
           </SelectTrigger>
           <SelectContent>
-            {projectData.map(({ location }) => (
-              <SelectItem key={location} value={location}>
-                {location}
+            {projectData.map(({ projectLocation }) => (
+              <SelectItem key={projectLocation} value={projectLocation}>
+                {projectLocation}
               </SelectItem>
             ))}
           </SelectContent>

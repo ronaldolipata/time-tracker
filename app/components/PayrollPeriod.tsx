@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { useTimeTracker } from '@/context/TimeTrackerContext';
 import React from 'react';
 import HolidaySelectionDialog from './HolidaySelectionDialog';
+import { Label } from '@/components/ui/label';
 
 export default function PayrollPeriod() {
   const { isPayrollPeriodEnabled, startDate, endDate, setStartDate, setEndDate } = useTimeTracker();
@@ -12,7 +13,7 @@ export default function PayrollPeriod() {
       <CardTitle>Payroll Period</CardTitle>
       <div className='flex flex-col lg:flex-row gap-4'>
         <div className='flex flex-col gap-2'>
-          <label className='text-sm'>Start Date:</label>
+          <Label className='text-sm'>Start Date:</Label>
           <Input
             className='flex justify-center'
             type='date'
@@ -22,7 +23,7 @@ export default function PayrollPeriod() {
           />
         </div>
         <div className='flex flex-col gap-2'>
-          <label className='text-sm'>End Date:</label>
+          <Label className='text-sm'>End Date:</Label>
           <Input
             className='flex justify-center'
             type='date'
