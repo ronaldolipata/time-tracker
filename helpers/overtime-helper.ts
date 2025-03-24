@@ -1,8 +1,8 @@
 import { TimeEntry, Holidays } from '@/context/types';
 import { isSunday } from 'date-fns';
-import { calculateWorkHours } from './workHoursHelper';
-import { isRegularHoliday } from './holidayHelper';
-import { WorkTime } from '@/enums/WorkTime';
+import { calculateWorkHours } from './work-hours-helper';
+import { isRegularHoliday } from './holiday-helper';
+import { WorkTime } from '@/enums/work-time';
 
 /**
  * Calculates overtime hours worked beyond the regular working hours.

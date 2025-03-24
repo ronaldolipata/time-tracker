@@ -1,8 +1,8 @@
 import { Card } from '@/components/ui/card';
-import addEllipsis from '@/helpers/addEllipsis';
-import AttendanceTableDialog from './AttendanceTableDialog';
+import addEllipsis from '@/helpers/add-ellipsis';
+import AttendanceTableDialog from './attendance-table-dialog';
 import { EmployeeData, Summary } from '@/context/types';
-import { useTimeTracker } from '@/context/TimeTrackerContext';
+import { useTimeTracker } from '@/context/time-tracker-context';
 
 export default function AttendanceTable() {
   const { holidays, employeeData } = useTimeTracker();

@@ -1,6 +1,6 @@
 import { differenceInMinutes, parse, addDays } from 'date-fns';
-import { WorkTime } from '@/enums/WorkTime';
-import { BreakTime } from '@/enums/BreakTime';
+import { WorkTime } from '@/enums/work-time';
+import { BreakTime } from '@/enums/break-time';
 
 /**
  * Calculates the total work hours excluding lunch break when applicable.

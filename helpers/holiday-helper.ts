@@ -1,4 +1,4 @@
-import { isValidTimeEntry } from '@/utils/isValidTimeEntry';
+import { isValidTimeEntry } from '@/utils/is-valid-time-entry';
 import { TimeEntry, Holidays } from '@/context/types';
 import { addDays, isSunday, subDays } from 'date-fns';
 

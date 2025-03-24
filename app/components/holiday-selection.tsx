@@ -11,11 +11,11 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { formatDate } from '@/utils/formatDate';
-import DayColorIndicator from '@/components/DayColorIndicator';
-import { getTableRowBackgroundClass } from '@/helpers/getTableRowBackgroundClass';
+import { formatDate } from '@/utils/format-date';
+import DayColorIndicator from '@/components/day-color-indicator';
+import { getTableRowBackgroundClass } from '@/helpers/get-table-row-background-class';
 import { Holidays } from '@/context/types';
-import { useTimeTracker } from '@/context/TimeTrackerContext';
+import { useTimeTracker } from '@/context/time-tracker-context';
 
 export default function HolidaySelection() {
   const { dates, setHolidays, holidays, setIsTimeEntriesEnabled, setIsHolidaySelectionVisible } =

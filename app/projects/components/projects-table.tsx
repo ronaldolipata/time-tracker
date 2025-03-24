@@ -12,9 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import DeleteDialog from './DeleteDialog';
-import NoTableRecord from '@/components/NoTableRecord';
-import { useTimeTracker } from '@/context/TimeTrackerContext';
+import DeleteDialog from './delete-dialog';
+import NoTableRecord from '@/components/no-table-record';
+import { useTimeTracker } from '@/context/time-tracker-context';
 import { ProjectData } from '@/context/types';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

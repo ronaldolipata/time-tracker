@@ -12,7 +12,7 @@ import {
 import { EmployeeData, Holidays, ProjectData, TimeEntry } from './types';
 import { toast } from 'react-toastify';
 import { addDays, format } from 'date-fns';
-import { calculateSummary } from '@/helpers/calculateSummary';
+import { calculateSummary } from '@/helpers/calculate-summary';
 
 type TimeTrackerType = {
   // Project Details

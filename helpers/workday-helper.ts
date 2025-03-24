@@ -1,12 +1,12 @@
 import { TimeEntry, Holidays } from '@/context/types';
 import { isSunday } from 'date-fns';
-import { isValidTimeEntry } from '@/utils/isValidTimeEntry';
+import { isValidTimeEntry } from '@/utils/is-valid-time-entry';
 import {
   isRegularHoliday,
   isSpecialNonWorkingHoliday,
   isSpecialWorkingHoliday,
-} from './holidayHelper';
-import { isWorkedHalfDay, isWorkedWholeDay } from './workHoursHelper';
+} from './holiday-helper';
+import { isWorkedHalfDay, isWorkedWholeDay } from './work-hours-helper';
 
 /**
  * Checks if the given date is a valid regular workday.

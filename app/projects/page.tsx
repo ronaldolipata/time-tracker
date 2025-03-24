@@ -2,11 +2,11 @@
 
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CustomLink } from '@/components/CustomLink';
+import { CustomLink } from '@/components/custom-link';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { DynamicBreadcrumbs } from '@/components/DynamicBreadcrumbs';
-import ProjectsTable from './components/ProjectsTable';
+import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
+import ProjectsTable from './components/projects-table';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 export default function Projects() {

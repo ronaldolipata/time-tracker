@@ -16,9 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatDate } from '@/utils/formatDate';
-import DayColorIndicator from '@/components/DayColorIndicator';
-import { getTableRowBackgroundClass } from '@/helpers/getTableRowBackgroundClass';
+import { formatDate } from '@/utils/format-date';
+import DayColorIndicator from '@/components/day-color-indicator';
+import { getTableRowBackgroundClass } from '@/helpers/get-table-row-background-class';
 import { Holidays, TimeEntry } from '@/context/types';
 
 type AttendanceTableDialogProps = {
