@@ -40,7 +40,7 @@ export default function SelectProject() {
           onValueChange={(value) => setSelectedLocation(value)}
         >
           <SelectTrigger className='w-full'>
-            <SelectValue placeholder='Select projectLocation' />
+            <SelectValue placeholder='Select project location' />
           </SelectTrigger>
           <SelectContent>
             {projectData.map(({ projectLocation }) => (
@@ -55,9 +55,9 @@ export default function SelectProject() {
             <SelectValue placeholder={'Select project name'} />
           </SelectTrigger>
           <SelectContent>
-            {filteredProjects.map(({ name }) => (
-              <SelectItem key={name} value={name}>
-                {name}
+            {filteredProjects.map(({ projectName }) => (
+              <SelectItem key={projectName} value={projectName}>
+                {projectName}
               </SelectItem>
             ))}
           </SelectContent>
