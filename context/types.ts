@@ -34,6 +34,6 @@ export type ProjectData = {
   projects: {
     projectName: string;
     projectStatus: string;
-    employeeData?: EmployeeData[];
+    employeeData: EmployeeData[];
   }[];
 }[];
