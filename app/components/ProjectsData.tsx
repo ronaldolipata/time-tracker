@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useTimeTracker } from '@/context/TimeTrackerContext';
-import { X } from 'lucide-react';
+import { Copy, X } from 'lucide-react';
 
 export default function ProjectsData() {
   const { projectData, handleCopy } = useTimeTracker();
@@ -33,9 +33,9 @@ export default function ProjectsData() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className='py-4 px-3'>Location</TableHead>
-                <TableHead className='py-4 px-3'>Project Name</TableHead>
-                <TableHead className='py-4 px-3'>Action</TableHead>
+                <TableHead className='py-4 px-3 w-12'>Location</TableHead>
+                <TableHead className='py-4 px-3 w-12'>Project Name</TableHead>
+                <TableHead className='py-4 px-3 w-12'>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -45,13 +45,13 @@ export default function ProjectsData() {
                     <TableRow key={`${projectLocation}-${projectName}`}>
                       <TableCell className='py-4 px-3'>{projectLocation}</TableCell>
                       <TableCell className='py-4 px-3'>{projectName}</TableCell>
-                      <TableCell className='py-4 px-3'>
+                      <TableCell className='p-2'>
                         <Button
-                          className={'focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'}
+                          className={'p-0 focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'}
                           onClick={() => handleCopy(projectLocation, projectName)}
                           disabled={!hasEmployeeData(projectLocation, projectName)}
                         >
-                          Copy data
+                          <Copy />
                         </Button>
                       </TableCell>
                     </TableRow>
