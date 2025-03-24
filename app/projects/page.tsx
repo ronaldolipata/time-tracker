@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Search, SquarePen, Trash, X } from 'lucide-react';
+import { Search, SquarePen, Trash } from 'lucide-react';
 
 import { CustomLink } from '@/components/CustomLink';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,7 @@ import { DynamicBreadcrumbs } from '@/components/DynamicBreadcrumbs';
 import { useTimeTracker } from '@/context/TimeTrackerContext';
 import { ProjectData } from '@/context/types';
 import DeleteDialog from './components/DeleteDialog';
+import NoTableRecord from '@/components/NoTableRecord';
 
 export default function Projects() {
   const { projectData, setProjectData } = useTimeTracker();
@@ -261,19 +262,10 @@ export default function Projects() {
                   })
                 )
               ) : (
-                <TableRow className='hover:bg-transparent'>
-                  <TableCell colSpan={5} className='h-60 text-center'>
-                    <div className='flex flex-col gap-2'>
-                      <div className='self-center p-2 bg-gray-100 rounded-full'>
-                        <X size={24} className='text-gray-400' />
-                      </div>
-                      <div className='flex flex-col'>
-                        <span className='text-xl font-medium'>No projects</span>
-                        <span className='text-muted-foreground'>Create a new project</span>
-                      </div>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                <NoTableRecord
+                  title='No projects'
+                  description={{ message: 'Create a new project', href: '/projects/create' }}
+                />
               )}
             </TableBody>
           </Table>
