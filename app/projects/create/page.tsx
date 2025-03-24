@@ -44,7 +44,7 @@ export default function Create() {
   return (
     <>
       <ToastContainer />
-      <div className='flex flex-col gap-6 py-6'>
+      <div className='flex flex-col gap-6 py-8'>
         <div className='flex flex-col gap-2'>
           <DynamicBreadcrumbs />
           <h1 className='text-3xl font-bold'>Create Projects</h1>

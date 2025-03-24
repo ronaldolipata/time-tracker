@@ -122,7 +122,7 @@ export default function Projects() {
   return (
     <>
       <ToastContainer />
-      <div className='flex flex-col gap-8 py-4'>
+      <div className='flex flex-col gap-8 py-8'>
         <div className='flex flex-col lg:flex-row lg:justify-between gap-4'>
           <div className='flex flex-col gap-2'>
             <DynamicBreadcrumbs />
