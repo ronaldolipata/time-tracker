@@ -13,9 +13,8 @@ export default function Home() {
       <ToastContainer />
       <div className='flex flex-col gap-4 py-4'>
         <h1 className='text-xl font-bold'>Time Tracker</h1>
-        {/* @TODO: Select payroll period */}
-        <PayrollPeriod />
-        <div className='flex flex-col lg:flex-row gap-4'>
+        <div className='grid grid-cols-1 lg:grid-cols-4 gap-4'>
+          <PayrollPeriod />
           <SelectProject />
           <TimeEntries />
         </div>
