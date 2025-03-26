@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -22,6 +21,7 @@ import DayColorIndicator from '@/components/day-color-indicator';
 import { getTableRowBackgroundClass } from '@/helpers/get-table-row-background-class';
 import { formatDate } from '@/utils/format-date';
 import { Holidays } from '@/context/types';
+import { addDays, format } from 'date-fns';
 
 export default function HolidaySelectionDialog() {
   const {
@@ -30,7 +30,7 @@ export default function HolidaySelectionDialog() {
     dates,
     holidays,
     setHolidays,
-    handleApplyDates,
+    setDates,
     setIsHolidaySelectionVisible,
   } = useTimeTracker();
   const [tempHolidays, setTempHolidays] = useState<Holidays>({
@@ -40,16 +40,30 @@ export default function HolidaySelectionDialog() {
   });
   const [open, setOpen] = useState(false);
 
-  // Initialize temporary holidays when dialog opens
+  function getDatesInRange(start: Date, end: Date): string[] {
+    const dates = [];
+    let current = start;
+    while (current <= end) {
+      dates.push(format(current, 'MM/dd/yyyy'));
+      current = addDays(current, 1);
+    }
+    return dates;
+  }
+
+  // Initialize temporary holidays and generate dates when dialog opens
   useEffect(() => {
-    if (open) {
+    if (open && startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      setDates(getDatesInRange(start, end));
+
       setTempHolidays({
         regular: { dates: new Set(holidays.regular.dates) },
         specialNonWorkingHoliday: { dates: new Set(holidays.specialNonWorkingHoliday.dates) },
         specialWorkingHoliday: { dates: new Set(holidays.specialWorkingHoliday.dates) },
       });
     }
-  }, [open, holidays]);
+  }, [open, startDate, endDate, holidays, setDates]);
 
   function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
     setTempHolidays((prev) => {
@@ -83,7 +97,7 @@ export default function HolidaySelectionDialog() {
     });
   }
 
-  function handleApply() {
+  function handleSave() {
     setHolidays(tempHolidays);
     setOpen(false);
     setIsHolidaySelectionVisible(true);
@@ -94,14 +108,9 @@ export default function HolidaySelectionDialog() {
       <DialogTrigger asChild>
         <Button
           className='lg:self-end focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
-          onClick={() => handleApplyDates(startDate, endDate)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleApplyDates(startDate, endDate);
-            }
-          }}
+          disabled={!startDate || !endDate}
         >
-          Apply
+          Set Holidays
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-xl'>
@@ -152,11 +161,11 @@ export default function HolidaySelectionDialog() {
             </TableBody>
           </Table>
         </div>
-        <DialogFooter className='sm:justify-end'>
-          <Button className='self-end cursor-pointer' onClick={handleApply}>
-            Apply
+        <div className='flex justify-end'>
+          <Button className='cursor-pointer' onClick={handleSave}>
+            Save
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
