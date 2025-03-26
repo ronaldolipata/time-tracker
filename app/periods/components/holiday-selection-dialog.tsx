@@ -1,14 +1,18 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { useTimeTracker } from '@/context/time-tracker-context';
 import { Button } from '@/components/ui/button';
+import { Holidays } from '@/context/types';
+import { addDays, format } from 'date-fns';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import {
   Table,
   TableBody,
@@ -20,10 +24,15 @@ import {
 import DayColorIndicator from '@/components/day-color-indicator';
 import { getTableRowBackgroundClass } from '@/helpers/get-table-row-background-class';
 import { formatDate } from '@/utils/format-date';
-import { Holidays } from '@/context/types';
-import { addDays, format } from 'date-fns';
+import { Input } from '@/components/ui/input';
 
-export default function HolidaySelectionDialog() {
+interface HolidaySelectionDialogProps {
+  isEditMode?: boolean;
+}
+
+export default function HolidaySelectionDialog({
+  isEditMode = false,
+}: HolidaySelectionDialogProps) {
   const {
     startDate,
     endDate,
@@ -38,7 +47,7 @@ export default function HolidaySelectionDialog() {
     specialNonWorkingHoliday: { dates: new Set() },
     specialWorkingHoliday: { dates: new Set() },
   });
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   function getDatesInRange(start: Date, end: Date): string[] {
     const dates = [];
@@ -50,20 +59,23 @@ export default function HolidaySelectionDialog() {
     return dates;
   }
 
-  // Initialize temporary holidays and generate dates when dialog opens
+  // Initialize dates and temporary holidays when dialog opens
   useEffect(() => {
-    if (open && startDate && endDate) {
+    if (isOpen && startDate && endDate) {
+      // Generate dates from the existing start and end dates
       const start = new Date(startDate);
       const end = new Date(endDate);
-      setDates(getDatesInRange(start, end));
+      const datesInRange = getDatesInRange(start, end);
+      setDates(datesInRange);
 
+      // Initialize temporary holidays
       setTempHolidays({
         regular: { dates: new Set(holidays.regular.dates) },
         specialNonWorkingHoliday: { dates: new Set(holidays.specialNonWorkingHoliday.dates) },
         specialWorkingHoliday: { dates: new Set(holidays.specialWorkingHoliday.dates) },
       });
     }
-  }, [open, startDate, endDate, holidays, setDates]);
+  }, [isOpen, startDate, endDate, holidays, setDates]);
 
   function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
     setTempHolidays((prev) => {
@@ -99,24 +111,28 @@ export default function HolidaySelectionDialog() {
 
   function handleSave() {
     setHolidays(tempHolidays);
-    setOpen(false);
+    setIsOpen(false);
     setIsHolidaySelectionVisible(true);
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+      <AlertDialogTrigger asChild>
         <Button
           className='lg:self-end focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
-          disabled={!startDate || !endDate}
+          disabled={!isEditMode && (!startDate || !endDate)}
         >
           Set Holidays
         </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-xl'>
-        <DialogHeader>
-          <DialogTitle className='font-bold text-blue-900'>Holiday Selection</DialogTitle>
-        </DialogHeader>
+      </AlertDialogTrigger>
+      <AlertDialogContent className='max-w-4xl'>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Set Holidays</AlertDialogTitle>
+          <AlertDialogDescription>
+            Select dates to mark as holidays. You can choose between regular holidays, special
+            non-working holidays, and special working holidays.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
         <DayColorIndicator />
         <div className='rounded-md border'>
           <Table>
@@ -166,7 +182,7 @@ export default function HolidaySelectionDialog() {
             Save
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
