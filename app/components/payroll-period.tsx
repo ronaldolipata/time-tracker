@@ -7,27 +7,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 export default function PayrollPeriod() {
-  const {
-    payrollPeriod,
-    selectedPayrollPeriod,
-    setSelectedPayrollPeriod,
-    setIsSelectProjectEnabled,
-  } = useTimeTracker();
+  const { payrollPeriod, setSelectedPayrollPeriod, setIsSelectProjectEnabled } = useTimeTracker();
 
   return (
     <Card className='w-full gap-4 p-4'>
       <div className='flex flex-col gap-2'>
-        <CardTitle>Select payroll period</CardTitle>
+        <CardTitle>Select Payroll Period</CardTitle>
         <CardDescription>Select to enter project details</CardDescription>
       </div>
 
       <div className='flex flex-col lg:flex-row gap-4'>
         <Select
-          disabled={!payrollPeriod.length}
           onValueChange={(value) => {
             const selectedPeriod = payrollPeriod.find(({ startDate, endDate }) => {
               const formatted = `${format(startDate, 'MMMM dd, yyyy')} - ${format(
@@ -39,34 +33,41 @@ export default function PayrollPeriod() {
 
             if (selectedPeriod) {
               setSelectedPayrollPeriod(selectedPeriod); // Set the correct object
+              setIsSelectProjectEnabled(true);
             }
           }}
         >
-          <SelectTrigger className='w-full'>
-            <SelectValue placeholder='Select project location' />
+          <SelectTrigger className='w-full truncate'>
+            <SelectValue placeholder='Select payroll period' />
           </SelectTrigger>
           <SelectContent>
-            {payrollPeriod.map(({ startDate, endDate }) => {
-              const formattedPeriod = `${format(startDate, 'MMMM dd, yyyy')} - ${format(
-                endDate,
-                'MMMM dd, yyyy'
-              )}`;
+            {payrollPeriod.length > 0 ? (
+              payrollPeriod.map(({ startDate, endDate }) => {
+                const formattedPeriod = `${format(startDate, 'MMMM dd, yyyy')} - ${format(
+                  endDate,
+                  'MMMM dd, yyyy'
+                )}`;
 
-              return (
-                <SelectItem key={formattedPeriod} value={formattedPeriod}>
-                  {formattedPeriod}
-                </SelectItem>
-              );
-            })}
+                return (
+                  <SelectItem key={formattedPeriod} value={formattedPeriod}>
+                    {formattedPeriod}
+                  </SelectItem>
+                );
+              })
+            ) : (
+              <div className='p-2 text-center text-sm text-muted-foreground'>
+                <p>No payroll periods available.</p>
+                <p>
+                  Please create{' '}
+                  <Link className='!text-blue-600' href={'/period'}>
+                    here
+                  </Link>
+                  .
+                </p>
+              </div>
+            )}
           </SelectContent>
         </Select>
-        <Button
-          className='focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'
-          onClick={() => setIsSelectProjectEnabled(true)}
-          disabled={!selectedPayrollPeriod || !payrollPeriod.length}
-        >
-          Select
-        </Button>
       </div>
     </Card>
   );

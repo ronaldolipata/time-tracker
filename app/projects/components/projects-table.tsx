@@ -350,10 +350,7 @@ export default function ProjectsTable() {
               projects.map(({ projectStatus, projectName }, subIndex) => {
                 const projectId = `${projectLocation}-${projectName}`;
                 return (
-                  <TableRow
-                    key={projectId}
-                    className={subIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                  >
+                  <TableRow key={projectId} className={subIndex % 2 === 0 ? '' : 'bg-gray-50'}>
                     <TableCell className='py-4 px-3 w-12'>
                       <Checkbox
                         id={`project-checkbox-${projectId}`}

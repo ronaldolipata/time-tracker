@@ -27,22 +27,25 @@ export default function ProjectsData() {
       <Card className='w-full gap-4 p-4'>
         <div className='flex flex-col gap-2'>
           <CardTitle>Projects Data</CardTitle>
-          <CardDescription>Show data by projectLocation and project name</CardDescription>
+          <CardDescription>Show data by project location and name</CardDescription>
         </div>
         <div className='flex flex-col gap-4 rounded-md border'>
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className='bg-gray-50'>
                 <TableHead className='py-4 px-3 w-12'>Location</TableHead>
-                <TableHead className='py-4 px-3 w-12'>Project Name</TableHead>
+                <TableHead className='py-4 px-3 w-12'>Name</TableHead>
                 <TableHead className='py-4 px-3 w-12'>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {projectData.length > 0 ? (
                 projectData.flatMap(({ projectLocation, projects }) =>
-                  projects.map(({ projectName }) => (
-                    <TableRow key={`${projectLocation}-${projectName}`}>
+                  projects.map(({ projectName }, subIndex) => (
+                    <TableRow
+                      key={`${projectLocation}-${projectName}`}
+                      className={subIndex % 2 === 0 ? '' : 'bg-gray-50'}
+                    >
                       <TableCell className='py-4 px-3'>{projectLocation}</TableCell>
                       <TableCell className='py-4 px-3'>{projectName}</TableCell>
                       <TableCell className='p-2'>

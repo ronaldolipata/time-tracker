@@ -49,11 +49,9 @@ type TimeTrackerType = {
   isHolidaySelectionVisible: boolean;
   isAttendanceTableVisible: boolean;
   isTimeEntriesEnabled: boolean;
-  isPayrollPeriodEnabled: boolean;
   setIsSelectProjectEnabled: Dispatch<SetStateAction<boolean>>;
   setIsTimeEntriesEnabled: Dispatch<SetStateAction<boolean>>;
   setIsHolidaySelectionVisible: Dispatch<SetStateAction<boolean>>;
-  setIsPayrollPeriodEnabled: Dispatch<SetStateAction<boolean>>;
 
   // Functions
   handleCreateProject: (
@@ -103,7 +101,6 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
 
   // UI
   const [isSelectProjectEnabled, setIsSelectProjectEnabled] = useState<boolean>(false);
-  const [isPayrollPeriodEnabled, setIsPayrollPeriodEnabled] = useState<boolean>(false);
   const [isHolidaySelectionVisible, setIsHolidaySelectionVisible] = useState<boolean>(false);
   const [isTimeEntriesEnabled, setIsTimeEntriesEnabled] = useState<boolean>(false);
   const [isAttendanceTableVisible, setIsAttendanceTableVisible] = useState<boolean>(false);
@@ -181,7 +178,6 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   }
 
   function handleClearProjectDetails(): void {
-    setIsPayrollPeriodEnabled(false);
     setIsHolidaySelectionVisible(false);
     setProjectLocation('');
     setProjectName('');
@@ -326,7 +322,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         .join('\n');
 
       navigator.clipboard.writeText(data);
-      toast.success(`Copied data for ${name} in ${projectLocation} to clipboard!`);
+      toast.success(`Copied data to clipboard!`);
     },
     [projectData]
   );
@@ -368,11 +364,9 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         isHolidaySelectionVisible,
         isAttendanceTableVisible,
         isTimeEntriesEnabled,
-        isPayrollPeriodEnabled,
         setIsSelectProjectEnabled,
         setIsTimeEntriesEnabled,
         setIsHolidaySelectionVisible,
-        setIsPayrollPeriodEnabled,
 
         // Functions
         handleCreateProject,
