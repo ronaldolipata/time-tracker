@@ -1,6 +1,11 @@
 export type PayrollPeriod = {
   startDate: Date;
   endDate: Date;
+  holidays: {
+    regular: Set<string>;
+    specialNonWorkingHoliday: Set<string>;
+    specialWorkingHoliday: Set<string>;
+  };
 };
 
 export type TimeEntry = {

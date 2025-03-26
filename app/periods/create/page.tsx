@@ -18,21 +18,15 @@ export default function Create() {
   const router = useRouter();
 
   function handleCreate(startDate: string, endDate: string) {
-    const success = handleCreatePayrollPeriod(startDate, endDate);
-
-    if (success) {
-      router.push(`/periods?success=${encodeURIComponent('Successfully created')}`);
-    }
+    handleCreatePayrollPeriod(new Date(startDate), new Date(endDate));
+    router.push(`/periods?success=${encodeURIComponent('Successfully created')}`);
   }
 
   function handleCreateAndCreateAnother(startDate: string, endDate: string) {
-    const success = handleCreatePayrollPeriod(startDate, endDate);
-
-    if (success) {
-      // The form is already cleared by handleCreatePayrollPeriod
-      // Just need to reset the dates array for the next period
-      setDates([]);
-    }
+    handleCreatePayrollPeriod(new Date(startDate), new Date(endDate));
+    // The form is already cleared by handleCreatePayrollPeriod
+    // Just need to reset the dates array for the next period
+    setDates([]);
   }
 
   return (

@@ -29,15 +29,6 @@ export default function PeriodsTable() {
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
 
-  // Function to format date to a readable string
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
   // Function to handle sorting
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -60,8 +51,12 @@ export default function PeriodsTable() {
     // Filter by search term (search in formatted period strings)
     const filteredPeriods = searchTerm
       ? payrollPeriod.filter((period) => {
-          const periodString = `${formatDate(period.startDate)} - ${formatDate(period.endDate)}`;
-          return periodString.toLowerCase().includes(searchTerm.toLowerCase());
+          const startDate = formatPeriod(period.startDate);
+          const endDate = formatPeriod(period.endDate);
+          return (
+            startDate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            endDate.toLowerCase().includes(searchTerm.toLowerCase())
+          );
         })
       : payrollPeriod;
 
@@ -160,7 +155,7 @@ export default function PeriodsTable() {
               <Input
                 type='text'
                 className='min-h-8 pl-8 pr-8 text-sm border cursor-pointer'
-                placeholder='Search period (e.g., Jan 1, 2024 - Jan 31, 2024)'
+                placeholder='Search start or end date'
                 aria-label='Search periods'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -269,6 +264,9 @@ export default function PeriodsTable() {
                 />
               </div>
             </TableHead>
+            <TableHead className='py-4 px-3 w-12'>Regular</TableHead>
+            <TableHead className='py-4 px-3 w-12'>Special Non-working</TableHead>
+            <TableHead className='py-4 px-3 w-12'>Special Working</TableHead>
             <TableHead className='py-4 px-3 text-center'>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -283,13 +281,49 @@ export default function PeriodsTable() {
                       id={`period-checkbox-${periodId}`}
                       checked={selectedPeriods.includes(periodId)}
                       onCheckedChange={() => handleSelectPeriod(periodId)}
-                      aria-label={`Select period from ${formatDate(
+                      aria-label={`Select period from ${formatPeriod(
                         period.startDate
-                      )} to ${formatDate(period.endDate)}`}
+                      )} to ${formatPeriod(period.endDate)}`}
                     />
                   </TableCell>
                   <TableCell className='py-4 px-3'>{formatPeriod(period.startDate)}</TableCell>
                   <TableCell className='py-4 px-3'>{formatPeriod(period.endDate)}</TableCell>
+                  <TableCell className='py-4 px-3'>
+                    <div className='flex flex-wrap gap-2'>
+                      {Array.from(period.holidays.regular).map((date) => (
+                        <span
+                          key={date}
+                          className='px-3 py-[3px] font-medium bg-blue-100 text-blue-600 rounded-full text-sm'
+                        >
+                          {formatPeriod(new Date(date))}
+                        </span>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className='py-4 px-3'>
+                    <div className='flex flex-wrap gap-2'>
+                      {Array.from(period.holidays.specialNonWorkingHoliday).map((date) => (
+                        <span
+                          key={date}
+                          className='px-3 py-[3px] font-medium bg-blue-100 text-blue-600 rounded-full text-sm'
+                        >
+                          {formatPeriod(new Date(date))}
+                        </span>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className='py-4 px-3'>
+                    <div className='flex flex-wrap gap-2'>
+                      {Array.from(period.holidays.specialWorkingHoliday).map((date) => (
+                        <span
+                          key={date}
+                          className='px-3 py-[3px] font-medium bg-blue-100 text-blue-600 rounded-full text-sm'
+                        >
+                          {formatPeriod(new Date(date))}
+                        </span>
+                      ))}
+                    </div>
+                  </TableCell>
                   <TableCell className='py-4 px-3'>
                     <div className='flex items-center justify-center gap-4 font-medium text-center'>
                       <Link
@@ -297,9 +331,9 @@ export default function PeriodsTable() {
                           period.startDate.toISOString()
                         )}&end=${encodeURIComponent(period.endDate.toISOString())}`}
                         className='flex items-center'
-                        aria-label={`Edit period from ${formatDate(
+                        aria-label={`Edit period from ${formatPeriod(
                           period.startDate
-                        )} to ${formatDate(period.endDate)}`}
+                        )} to ${formatPeriod(period.endDate)}`}
                       >
                         <SquarePen className='mr-2' size={16} />
                         Edit

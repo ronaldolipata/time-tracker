@@ -65,7 +65,7 @@ type TimeTrackerType = {
   handleApplyDates: (startDate: string, endDate: string) => void;
   handlePaste: (event: React.ClipboardEvent<HTMLInputElement>) => void;
   handleCopy: (projectLocation: string, projectName: string) => void;
-  handleCreatePayrollPeriod: (startDate: string, endDate: string) => boolean;
+  handleCreatePayrollPeriod: (startDate: Date, endDate: Date) => void;
 
   projectData: ProjectData;
   employeeData: EmployeeData[];
@@ -83,6 +83,11 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   const [selectedPayrollPeriod, setSelectedPayrollPeriod] = useState<PayrollPeriod>({
     startDate: new Date(),
     endDate: new Date(),
+    holidays: {
+      regular: new Set(),
+      specialNonWorkingHoliday: new Set(),
+      specialWorkingHoliday: new Set(),
+    },
   });
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedProject, setSelectedProject] = useState<string>('');
@@ -198,7 +203,18 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
 
     // @TODO: Handle start and end dates to have a valid payroll period
     setDates(getDatesInRange(start, end)); // Used to apply the dates for employee's data
-    setPayrollPeriod((prev) => [...prev, { startDate: start, endDate: end }]); // Used for displaying payroll period
+    setPayrollPeriod((prev) => [
+      ...prev,
+      {
+        startDate: start,
+        endDate: end,
+        holidays: {
+          regular: new Set(),
+          specialNonWorkingHoliday: new Set(),
+          specialWorkingHoliday: new Set(),
+        },
+      },
+    ]); // Used for displaying payroll period
   }
 
   function getDatesInRange(start: Date, end: Date): string[] {
@@ -328,56 +344,45 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     [projectData]
   );
 
-  function handleCreatePayrollPeriod(startDate: string, endDate: string): boolean {
+  const handleCreatePayrollPeriod = (startDate: Date, endDate: Date): void => {
+    // Validate dates
     if (!startDate || !endDate) {
-      toast.error('Please fill in the required details');
-      return false;
+      toast.error('Please select both start and end dates');
+      return;
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    // Check if end date is before start date
-    if (end < start) {
+    // Validate date range
+    if (endDate < startDate) {
       toast.error('End date cannot be before start date');
-      return false;
+      return;
     }
 
+    // Create new period with holidays
     const newPeriod: PayrollPeriod = {
-      startDate: start,
-      endDate: end,
+      startDate,
+      endDate,
+      holidays: {
+        regular: new Set(holidays.regular.dates),
+        specialNonWorkingHoliday: new Set(holidays.specialNonWorkingHoliday.dates),
+        specialWorkingHoliday: new Set(holidays.specialWorkingHoliday.dates),
+      },
     };
 
-    // Check if period already exists
-    const periodExists = payrollPeriod.some(
-      (period) =>
-        period.startDate.getTime() === newPeriod.startDate.getTime() &&
-        period.endDate.getTime() === newPeriod.endDate.getTime()
-    );
-
-    if (periodExists) {
-      toast.error('This payroll period already exists');
-      return false;
-    }
-
-    // Set the dates for holiday selection
-    setDates(getDatesInRange(start, end));
-
-    // Add the new period
+    // Add to existing periods
     setPayrollPeriod((prev) => [...prev, newPeriod]);
 
-    // Clear the form
+    // Reset form state
     setStartDate('');
     setEndDate('');
+    setDates([]);
     setHolidays({
       regular: { dates: new Set() },
       specialNonWorkingHoliday: { dates: new Set() },
       specialWorkingHoliday: { dates: new Set() },
     });
 
-    toast.success('Successfully created');
-    return true;
-  }
+    toast.success('Payroll period created successfully');
+  };
 
   return (
     <TimeTrackerContext.Provider
