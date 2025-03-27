@@ -239,7 +239,20 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
           timeOut: times[index * 2 + 1] || '',
         }));
 
-        return { name, timeEntries, summary: calculateSummary(timeEntries, holidays) };
+        // Transform the holidays structure to match the expected type
+        const transformedHolidays: Holidays = {
+          regular: { dates: selectedPayrollPeriod.holidays.regular },
+          specialNonWorkingHoliday: {
+            dates: selectedPayrollPeriod.holidays.specialNonWorkingHoliday,
+          },
+          specialWorkingHoliday: { dates: selectedPayrollPeriod.holidays.specialWorkingHoliday },
+        };
+
+        return {
+          name,
+          timeEntries,
+          summary: calculateSummary(timeEntries, transformedHolidays),
+        };
       });
   }
 
@@ -256,8 +269,12 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    const dateRange = getDatesInRange(
+      selectedPayrollPeriod.startDate,
+      selectedPayrollPeriod.endDate
+    );
     const pastedText = event.clipboardData.getData('Text');
-    const newEmployeeData = processPastedData(dates, pastedText);
+    const newEmployeeData = processPastedData(dateRange, pastedText);
 
     // Check if we actually have data
     if (!newEmployeeData || newEmployeeData.length === 0) {
