@@ -123,7 +123,7 @@ export default function CollapsibleHolidaySelection({
       </Button>
 
       {isExpanded && (
-        <div className='grid gap-5 border-t p-5 -mt-6'>
+        <div className='grid gap-5 border-t p-5 -mt-6 overflow-auto'>
           <div className='grid gap-2'>
             <h3 className='text-lg font-semibold'>Set Holidays</h3>
             <p className='text-sm text-gray-600'>
