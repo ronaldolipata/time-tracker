@@ -17,15 +17,8 @@ import { SuspenseWrapper } from '@/components/ui/SuspenseWrapper';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 function CreateContent() {
-  const {
-    startDate,
-    endDate,
-    setStartDate,
-    setEndDate,
-    handleCreatePayrollPeriod,
-    setDates,
-    setHolidays,
-  } = useTimeTracker();
+  const { startDate, endDate, setStartDate, setEndDate, handleCreatePayrollPeriod, setHolidays } =
+    useTimeTracker();
   const router = useRouter();
   const [tempHolidays, setTempHolidays] = useState<Holidays>({
     regular: { dates: new Set() },
@@ -37,21 +30,23 @@ function CreateContent() {
   function handleCreate(startDate: string, endDate: string) {
     setHolidays(tempHolidays);
     handleCreatePayrollPeriod(new Date(startDate), new Date(endDate), tempHolidays);
+    handleClearTempHolidays();
     router.push(`/periods?success=${encodeURIComponent('Successfully created')}`);
   }
 
   function handleCreateAndCreateAnother(startDate: string, endDate: string) {
     setHolidays(tempHolidays);
     handleCreatePayrollPeriod(new Date(startDate), new Date(endDate), tempHolidays);
-    // The form is already cleared by handleCreatePayrollPeriod
-    // Just need to reset the dates array and tempHolidays for the next period
-    setDates([]);
+    handleClearTempHolidays();
+    setIsHolidaySelectionExpanded(false);
+  }
+
+  function handleClearTempHolidays() {
     setTempHolidays({
       regular: { dates: new Set() },
       specialNonWorkingHoliday: { dates: new Set() },
       specialWorkingHoliday: { dates: new Set() },
     });
-    setIsHolidaySelectionExpanded(false);
   }
 
   return (

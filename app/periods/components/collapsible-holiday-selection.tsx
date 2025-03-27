@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTimeTracker } from '@/context/time-tracker-context';
 import { Button } from '@/components/ui/button';
 import { Holidays } from '@/context/types';
@@ -39,13 +39,17 @@ export default function CollapsibleHolidaySelection({
   const { startDate, endDate, dates, setDates } = useTimeTracker();
   const [internalIsExpanded, setInternalIsExpanded] = useState(false);
   const isExpanded = controlledIsExpanded ?? internalIsExpanded;
-  const setIsExpanded = (value: boolean) => {
-    if (onExpandedChange) {
-      onExpandedChange(value);
-    } else {
-      setInternalIsExpanded(value);
-    }
-  };
+
+  const setIsExpanded = useCallback(
+    (value: boolean) => {
+      if (onExpandedChange) {
+        onExpandedChange(value);
+      } else {
+        setInternalIsExpanded(value);
+      }
+    },
+    [onExpandedChange]
+  );
 
   function getDatesInRange(start: Date, end: Date): string[] {
     const dates = [];
@@ -57,16 +61,16 @@ export default function CollapsibleHolidaySelection({
     return dates;
   }
 
-  // Initialize dates and temporary holidays when expanded
+  // Initialize dates and temporary holidays when expanded or dates change
   useEffect(() => {
-    if (isExpanded && startDate && endDate) {
+    if (startDate && endDate) {
       // Generate dates from the existing start and end dates
       const start = new Date(startDate);
       const end = new Date(endDate);
       const datesInRange = getDatesInRange(start, end);
       setDates(datesInRange);
     }
-  }, [isExpanded, startDate, endDate, setDates]);
+  }, [startDate, endDate, setDates]);
 
   // Reset expanded state when dates change
   useEffect(() => {
