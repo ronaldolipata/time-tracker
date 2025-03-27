@@ -13,8 +13,8 @@ import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Holidays } from '@/context/types';
-import { SuspenseWrapper } from '@/components/ui/SuspenseWrapper';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { SuspenseWrapper } from '@/components/ui/suspense-wrapper';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 function CreateContent() {
   const { startDate, endDate, setStartDate, setEndDate, handleCreatePayrollPeriod, setHolidays } =
