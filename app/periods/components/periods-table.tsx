@@ -217,6 +217,7 @@ export default function PeriodsTable() {
           <TableRow className='bg-gray-50 border-t'>
             <TableHead className='py-4 px-3'>
               <Checkbox
+                className='bg-white'
                 id='select-all-checkbox'
                 checked={isAllSelected}
                 onCheckedChange={(checked) => {
@@ -278,6 +279,7 @@ export default function PeriodsTable() {
                 <TableRow key={periodId} className={index % 2 === 0 ? '' : 'bg-gray-50'}>
                   <TableCell className='py-4 px-3'>
                     <Checkbox
+                      className='bg-white'
                       id={`period-checkbox-${periodId}`}
                       checked={selectedPeriods.includes(periodId)}
                       onCheckedChange={() => handleSelectPeriod(periodId)}

@@ -293,6 +293,7 @@ export default function ProjectsTable() {
           <TableRow className='bg-gray-50 border-t'>
             <TableHead className='py-4 px-3 w-12'>
               <Checkbox
+                className='bg-white'
                 id='select-all-checkbox'
                 checked={isAllSelected}
                 onCheckedChange={(checked) => {
@@ -353,6 +354,7 @@ export default function ProjectsTable() {
                   <TableRow key={projectId} className={subIndex % 2 === 0 ? '' : 'bg-gray-50'}>
                     <TableCell className='py-4 px-3 w-12'>
                       <Checkbox
+                        className='bg-white'
                         id={`project-checkbox-${projectId}`}
                         checked={selectedProjects.includes(projectId)}
                         onCheckedChange={() => handleSelectProject(projectId)}
