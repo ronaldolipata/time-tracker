@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import { Spinner } from './Spinner';
+import { Spinner } from './spinner';
 
 interface SuspenseWrapperProps {
   children: React.ReactNode;
