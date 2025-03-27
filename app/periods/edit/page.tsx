@@ -8,7 +8,7 @@ import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import CollapsibleHolidaySelection from '../components/collapsible-holiday-selection';
-import UpdatePeriodDialog from '../components/update-period-dialog';
+import UpdatePeriodDialog from './components/update-period-dialog';
 import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter, useSearchParams } from 'next/navigation';

@@ -31,8 +31,25 @@ export default function UpdatePeriodDialog({
   const [isOpen, setIsOpen] = useState(false);
 
   const handleUpdate = () => {
+    if (!startDate || !endDate) {
+      return;
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return;
+    }
+
     onUpdate(startDate, endDate);
     setIsOpen(false);
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'Invalid date';
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? 'Invalid date' : formatPeriod(date);
   };
 
   return (
@@ -51,8 +68,8 @@ export default function UpdatePeriodDialog({
               <div className='bg-gray-50 p-4 rounded-md'>
                 <p className='font-medium'>Changes to be made:</p>
                 <ul className='list-disc list-inside mt-1 space-y-1'>
-                  <li>Start date: {formatPeriod(new Date(startDate))}</li>
-                  <li>End date: {formatPeriod(new Date(endDate))}</li>
+                  <li>Start date: {formatDate(startDate)}</li>
+                  <li>End date: {formatDate(endDate)}</li>
                   <li>Holiday settings</li>
                 </ul>
               </div>
