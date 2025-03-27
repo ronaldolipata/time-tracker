@@ -24,6 +24,8 @@ interface CollapsibleHolidaySelectionProps {
   datesChanged?: boolean;
   tempHolidays: Holidays;
   setTempHolidays: React.Dispatch<React.SetStateAction<Holidays>>;
+  isExpanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
 }
 
 export default function CollapsibleHolidaySelection({
@@ -31,9 +33,19 @@ export default function CollapsibleHolidaySelection({
   datesChanged = false,
   tempHolidays,
   setTempHolidays,
+  isExpanded: controlledIsExpanded,
+  onExpandedChange,
 }: CollapsibleHolidaySelectionProps) {
   const { startDate, endDate, dates, setDates } = useTimeTracker();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [internalIsExpanded, setInternalIsExpanded] = useState(false);
+  const isExpanded = controlledIsExpanded ?? internalIsExpanded;
+  const setIsExpanded = (value: boolean) => {
+    if (onExpandedChange) {
+      onExpandedChange(value);
+    } else {
+      setInternalIsExpanded(value);
+    }
+  };
 
   function getDatesInRange(start: Date, end: Date): string[] {
     const dates = [];

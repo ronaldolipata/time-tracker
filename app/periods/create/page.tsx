@@ -30,6 +30,7 @@ export default function Create() {
     specialNonWorkingHoliday: { dates: new Set() },
     specialWorkingHoliday: { dates: new Set() },
   });
+  const [isHolidaySelectionExpanded, setIsHolidaySelectionExpanded] = useState(false);
 
   function handleCreate(startDate: string, endDate: string) {
     setHolidays(tempHolidays);
@@ -48,6 +49,7 @@ export default function Create() {
       specialNonWorkingHoliday: { dates: new Set() },
       specialWorkingHoliday: { dates: new Set() },
     });
+    setIsHolidaySelectionExpanded(false);
   }
 
   return (
@@ -93,6 +95,8 @@ export default function Create() {
               <CollapsibleHolidaySelection
                 tempHolidays={tempHolidays}
                 setTempHolidays={setTempHolidays}
+                isExpanded={isHolidaySelectionExpanded}
+                onExpandedChange={setIsHolidaySelectionExpanded}
               />
             </div>
           </div>
