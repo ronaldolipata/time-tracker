@@ -50,7 +50,7 @@ export default function ProjectsData() {
                       <TableCell className='py-4 px-3'>{projectName}</TableCell>
                       <TableCell className='p-2'>
                         <Button
-                          className={'p-0 focus:bg-blue-900 hover:bg-blue-900 cursor-pointer'}
+                          className='p-0 cursor-pointer'
                           onClick={() => handleCopy(projectLocation, projectName)}
                           disabled={!hasEmployeeData(projectLocation, projectName)}
                         >
