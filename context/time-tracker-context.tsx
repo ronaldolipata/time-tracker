@@ -8,6 +8,7 @@ import {
   useCallback,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from 'react';
 import { EmployeeData, Holidays, PayrollPeriod, ProjectData, TimeEntry } from './types';
 import { toast } from 'react-toastify';
@@ -114,6 +115,67 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   const [isAttendanceTableVisible, setIsAttendanceTableVisible] = useState<boolean>(false);
 
   const [employeeData, setEmployeeData] = useState<EmployeeData[]>([]);
+
+  // Load data from localStorage on client-side only
+  useEffect(() => {
+    // Load projectData
+    const storedProjectData = localStorage.getItem('project-data');
+    if (storedProjectData) {
+      setProjectData(JSON.parse(storedProjectData));
+    }
+
+    // Load payrollPeriod
+    const storedPayrollPeriod = localStorage.getItem('payroll-period');
+    if (storedPayrollPeriod) {
+      const parsed = JSON.parse(storedPayrollPeriod);
+      setPayrollPeriod(
+        parsed.map(
+          (period: {
+            startDate: string;
+            endDate: string;
+            holidays: {
+              regular: string[];
+              specialNonWorkingHoliday: string[];
+              specialWorkingHoliday: string[];
+            };
+          }) => ({
+            ...period,
+            startDate: new Date(period.startDate),
+            endDate: new Date(period.endDate),
+            holidays: {
+              regular: new Set(period.holidays.regular),
+              specialNonWorkingHoliday: new Set(period.holidays.specialNonWorkingHoliday),
+              specialWorkingHoliday: new Set(period.holidays.specialWorkingHoliday),
+            },
+          })
+        )
+      );
+    }
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Update localStorage when projectData changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('project-data', JSON.stringify(projectData));
+    }
+  }, [projectData]);
+
+  // Update localStorage when payrollPeriod changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const serializedPeriods = payrollPeriod.map((period) => ({
+        ...period,
+        startDate: period.startDate.toISOString(),
+        endDate: period.endDate.toISOString(),
+        holidays: {
+          regular: Array.from(period.holidays.regular),
+          specialNonWorkingHoliday: Array.from(period.holidays.specialNonWorkingHoliday),
+          specialWorkingHoliday: Array.from(period.holidays.specialWorkingHoliday),
+        },
+      }));
+      localStorage.setItem('payroll-period', JSON.stringify(serializedPeriods));
+    }
+  }, [payrollPeriod]);
 
   function notifySuccess() {
     toast.success('Time entries successfully entered!', {
