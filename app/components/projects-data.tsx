@@ -32,7 +32,7 @@ export default function ProjectsData() {
         <div className='flex flex-col gap-4 rounded-md border'>
           <Table>
             <TableHeader>
-              <TableRow className='bg-gray-50'>
+              <TableRow className='bg-muted/50'>
                 <TableHead className='py-4 px-3 w-12'>Location</TableHead>
                 <TableHead className='py-4 px-3 w-12'>Name</TableHead>
                 <TableHead className='py-4 px-3 w-12'>Action</TableHead>
@@ -44,7 +44,7 @@ export default function ProjectsData() {
                   projects.map(({ projectName }, subIndex) => (
                     <TableRow
                       key={`${projectLocation}-${projectName}`}
-                      className={subIndex % 2 === 0 ? '' : 'bg-gray-50'}
+                      className={subIndex % 2 === 0 ? '' : 'bg-muted/50'}
                     >
                       <TableCell className='py-4 px-3'>{projectLocation}</TableCell>
                       <TableCell className='py-4 px-3'>{projectName}</TableCell>
