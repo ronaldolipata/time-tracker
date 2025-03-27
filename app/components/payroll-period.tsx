@@ -59,7 +59,7 @@ export default function PayrollPeriod() {
                 <p>No payroll periods available.</p>
                 <p>
                   Please create{' '}
-                  <Link className='!text-blue-600' href={'/period'}>
+                  <Link className='!text-blue-600' href={'/periods/create'}>
                     here
                   </Link>
                   .
