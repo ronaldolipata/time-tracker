@@ -14,7 +14,7 @@ export default function Home() {
       <div className='grid gap-6'>
         <div className='grid gap-6'>
           <h1 className='text-xl font-bold'>Time Tracker</h1>
-          <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
+          <div className='grid grid-cols-1 xl:grid-cols-4 gap-y-6 xl:gap-6'>
             <PayrollPeriod />
             <SelectProject />
             <TimeEntries />
