@@ -294,7 +294,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
               if (project.projectName === selectedProject) {
                 return {
                   ...project,
-                  employeeData: [...project.employeeData, ...newEmployeeData],
+                  employeeData: newEmployeeData,
                 };
               }
               return project;
