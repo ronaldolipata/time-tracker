@@ -7,15 +7,23 @@ import { useTimeTracker } from '@/context/time-tracker-context';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import HolidaySelectionDialog from '../components/holiday-selection-dialog';
-import { Button } from '@/components/ui/button';
+import CollapsibleHolidaySelection from '../components/collapsible-holiday-selection';
+import UpdatePeriodDialog from '../components/update-period-dialog';
 import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Edit() {
-  const { startDate, endDate, setStartDate, setEndDate, setPayrollPeriod, setHolidays, holidays } =
-    useTimeTracker();
+  const {
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
+    setPayrollPeriod,
+    setHolidays,
+    holidays,
+    payrollPeriod,
+  } = useTimeTracker();
   const router = useRouter();
   const searchParams = useSearchParams();
   const start = searchParams.get('start');
@@ -26,8 +34,23 @@ export default function Edit() {
     if (start && end) {
       setStartDate(new Date(start).toISOString().split('T')[0]);
       setEndDate(new Date(end).toISOString().split('T')[0]);
+
+      // Find the period to edit and initialize its holidays
+      const periodToEdit = payrollPeriod.find(
+        (period) => period.startDate.toISOString() === start && period.endDate.toISOString() === end
+      );
+
+      if (periodToEdit) {
+        setHolidays({
+          regular: { dates: new Set(periodToEdit.holidays.regular) },
+          specialNonWorkingHoliday: {
+            dates: new Set(periodToEdit.holidays.specialNonWorkingHoliday),
+          },
+          specialWorkingHoliday: { dates: new Set(periodToEdit.holidays.specialWorkingHoliday) },
+        });
+      }
     }
-  }, [start, end, setStartDate, setEndDate]);
+  }, [start, end, setStartDate, setEndDate, setHolidays, payrollPeriod]);
 
   function handleUpdate(startDate: string, endDate: string) {
     if (!startDate || !endDate) {
@@ -128,18 +151,17 @@ export default function Edit() {
               />
             </div>
             <div className='lg:col-span-2'>
-              <HolidaySelectionDialog isEditMode={true} datesChanged={datesChanged} />
+              <CollapsibleHolidaySelection isEditMode={true} datesChanged={datesChanged} />
             </div>
           </div>
         </Card>
         <div className='flex flex-col lg:flex-row gap-2'>
-          <Button
-            className='cursor-pointer'
-            onClick={() => handleUpdate(startDate, endDate)}
+          <UpdatePeriodDialog
+            startDate={startDate}
+            endDate={endDate}
+            onUpdate={handleUpdate}
             disabled={!startDate || !endDate}
-          >
-            Update
-          </Button>
+          />
           <CustomLink href='/periods' className='cursor-pointer' variant={'outline'}>
             Cancel
           </CustomLink>

@@ -6,7 +6,7 @@ import { useTimeTracker } from '@/context/time-tracker-context';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import HolidaySelectionDialog from '../components/holiday-selection-dialog';
+import CollapsibleHolidaySelection from '../components/collapsible-holiday-selection';
 import { Button } from '@/components/ui/button';
 import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
@@ -69,7 +69,7 @@ export default function Create() {
               />
             </div>
             <div className='lg:col-span-2'>
-              <HolidaySelectionDialog />
+              <CollapsibleHolidaySelection />
             </div>
           </div>
         </Card>
