@@ -36,20 +36,20 @@ export default function Create() {
   return (
     <>
       <ToastContainer />
-      <div className='flex flex-col gap-6 py-8'>
+      <div className='flex flex-col gap-5 py-8'>
         <div className='flex flex-col gap-2'>
           <DynamicBreadcrumbs />
           <h1 className='text-3xl font-bold'>Create Projects</h1>
         </div>
         <Card className='w-full gap-0 p-0'>
-          <div className='flex flex-col gap-2 border-b p-6'>
+          <div className='flex flex-col gap-2 border-b p-5'>
             <CardTitle>Project Details</CardTitle>
             <CardDescription>
               Create project projectLocation, and project name. These will be used to separate time
               entries of the employees.
             </CardDescription>
           </div>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 p-6'>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-5 p-5'>
             <div className='flex flex-col gap-2'>
               {/* @TODO: Dynamic indicator for required fields */}
               <Label className='text-sm font-semibold'>

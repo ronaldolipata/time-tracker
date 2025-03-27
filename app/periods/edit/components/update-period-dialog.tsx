@@ -66,7 +66,7 @@ export default function UpdatePeriodDialog({
             <AlertDialogDescription>
               Are you sure you want to update this period?
             </AlertDialogDescription>
-            <div className='grid gap-1 bg-gray-50 p-6 text-sm rounded-md'>
+            <div className='grid gap-1 bg-gray-50 p-5 text-sm rounded-md'>
               <p className='font-medium'>Changes to be made:</p>
               <ul className='grid gap-1 list-disc list-inside mt-1 space-y-1'>
                 <li>Start date: {formatDate(startDate)}</li>

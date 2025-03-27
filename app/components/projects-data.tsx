@@ -24,7 +24,7 @@ export default function ProjectsData() {
 
   return (
     <div>
-      <Card className='w-full gap-6 p-6'>
+      <Card className='w-full gap-5 p-5'>
         <div className='flex flex-col gap-2'>
           <CardTitle>Projects Data</CardTitle>
           <CardDescription>Show data by project location and name</CardDescription>

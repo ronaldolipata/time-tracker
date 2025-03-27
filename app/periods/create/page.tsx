@@ -52,20 +52,20 @@ function CreateContent() {
   return (
     <>
       <ToastContainer />
-      <div className='flex flex-col gap-6 py-8'>
+      <div className='flex flex-col gap-5 py-8'>
         <div className='flex flex-col gap-2'>
           <DynamicBreadcrumbs />
           <h1 className='text-3xl font-bold'>Create Payroll Period</h1>
         </div>
         <Card className='w-full gap-0 p-0'>
-          <div className='flex flex-col gap-2 border-b p-6'>
+          <div className='flex flex-col gap-2 border-b p-5'>
             <CardTitle>Payroll Period Details</CardTitle>
             <CardDescription>
               Create a new payroll period by selecting the start and end dates. You can also set
               holidays for this period.
             </CardDescription>
           </div>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 p-6'>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-5 p-5'>
             <div className='flex flex-col gap-2'>
               <Label className='text-sm font-semibold'>
                 Start Date <span className='text-red-600'>*</span>
