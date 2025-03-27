@@ -28,10 +28,12 @@ import { Input } from '@/components/ui/input';
 
 interface HolidaySelectionDialogProps {
   isEditMode?: boolean;
+  datesChanged?: boolean;
 }
 
 export default function HolidaySelectionDialog({
   isEditMode = false,
+  datesChanged = false,
 }: HolidaySelectionDialogProps) {
   const {
     startDate,
@@ -68,7 +70,7 @@ export default function HolidaySelectionDialog({
       const datesInRange = getDatesInRange(start, end);
       setDates(datesInRange);
 
-      // Initialize temporary holidays
+      // Initialize temporary holidays from the context
       setTempHolidays({
         regular: { dates: new Set(holidays.regular.dates) },
         specialNonWorkingHoliday: { dates: new Set(holidays.specialNonWorkingHoliday.dates) },
@@ -76,6 +78,13 @@ export default function HolidaySelectionDialog({
       });
     }
   }, [isOpen, startDate, endDate, holidays, setDates]);
+
+  // Reset dialog state when dates change
+  useEffect(() => {
+    if (datesChanged) {
+      setIsOpen(false);
+    }
+  }, [datesChanged]);
 
   function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
     setTempHolidays((prev) => {

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTimeTracker } from '@/context/time-tracker-context';
@@ -11,37 +12,22 @@ import { Button } from '@/components/ui/button';
 import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 export default function Edit() {
-  const { payrollPeriod, setPayrollPeriod, setHolidays, holidays } = useTimeTracker();
+  const { startDate, endDate, setStartDate, setEndDate, setPayrollPeriod, setHolidays, holidays } =
+    useTimeTracker();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+  const start = searchParams.get('start');
+  const end = searchParams.get('end');
+  const [datesChanged, setDatesChanged] = useState(false);
 
   useEffect(() => {
-    const start = searchParams.get('start');
-    const end = searchParams.get('end');
-
     if (start && end) {
       setStartDate(new Date(start).toISOString().split('T')[0]);
       setEndDate(new Date(end).toISOString().split('T')[0]);
-
-      // Find the period and set its holidays
-      const period = payrollPeriod.find(
-        (p) => p.startDate.toISOString() === start && p.endDate.toISOString() === end
-      );
-
-      if (period) {
-        setHolidays({
-          regular: { dates: period.holidays.regular },
-          specialNonWorkingHoliday: { dates: period.holidays.specialNonWorkingHoliday },
-          specialWorkingHoliday: { dates: period.holidays.specialWorkingHoliday },
-        });
-      }
     }
-  }, [searchParams, payrollPeriod, setHolidays]);
+  }, [start, end, setStartDate, setEndDate]);
 
   function handleUpdate(startDate: string, endDate: string) {
     if (!startDate || !endDate) {
@@ -91,6 +77,17 @@ export default function Edit() {
     router.push('/periods');
   }
 
+  const handleDateChange = (date: string, setter: (date: string) => void) => {
+    setter(date);
+    setDatesChanged(true);
+    // Clear holidays in the context when dates change
+    setHolidays({
+      regular: { dates: new Set() },
+      specialNonWorkingHoliday: { dates: new Set() },
+      specialWorkingHoliday: { dates: new Set() },
+    });
+  };
+
   return (
     <>
       <ToastContainer />
@@ -116,7 +113,7 @@ export default function Edit() {
                 type='date'
                 className='w-full min-h-8 text-sm border cursor-pointer'
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => handleDateChange(e.target.value, setStartDate)}
               />
             </div>
             <div className='flex flex-col gap-2'>
@@ -127,11 +124,11 @@ export default function Edit() {
                 type='date'
                 className='w-full min-h-8 text-sm border cursor-pointer'
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={(e) => handleDateChange(e.target.value, setEndDate)}
               />
             </div>
             <div className='lg:col-span-2'>
-              <HolidaySelectionDialog isEditMode={true} />
+              <HolidaySelectionDialog isEditMode={true} datesChanged={datesChanged} />
             </div>
           </div>
         </Card>
