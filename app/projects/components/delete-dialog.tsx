@@ -13,15 +13,18 @@ import {
 import { Trash } from 'lucide-react';
 
 type DeleteDialogProps = {
+  projectSite: string;
   projectLocation: string;
   projectName: string;
   handleDeleteProject: (
+    projectSite: string,
     projectLocation: string,
     projectName: string
-  ) => MouseEventHandler<HTMLButtonElement> | undefined;
+  ) => MouseEventHandler<HTMLButtonElement>;
 };
 
 export default function DeleteDialog({
+  projectSite,
   projectLocation,
   projectName,
   handleDeleteProject,
@@ -49,7 +52,7 @@ export default function DeleteDialog({
           <AlertDialogCancel className='cursor-pointer'>Cancel</AlertDialogCancel>
           <AlertDialogAction
             className='bg-red-600 hover:bg-red-500 cursor-pointer'
-            onClick={() => handleDeleteProject(projectLocation, projectName)}
+            onClick={() => handleDeleteProject(projectSite, projectLocation, projectName)}
           >
             Continue
           </AlertDialogAction>

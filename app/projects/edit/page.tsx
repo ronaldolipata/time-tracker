@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button } from '@/components/ui/button';
@@ -9,12 +11,17 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTimeTracker } from '@/context/time-tracker-context';
 import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
-import { useRouter } from 'next/navigation';
 import { Label } from '@/components/ui/label';
+import { toast } from 'react-toastify';
 
-export default function Create() {
+export default function Edit() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const projectParam = searchParams.get('project');
+
   const {
-    handleCreateProject,
+    projectData,
+    setProjectData,
     projectSite,
     projectLocation,
     projectStatus,
@@ -24,20 +31,76 @@ export default function Create() {
     setProjectStatus,
     setProjectName,
   } = useTimeTracker();
-  const router = useRouter();
 
-  function handleCreate(
-    projectSite: string,
-    projectLocation: string,
-    projectName: string,
-    projectStatus: string
-  ) {
-    const success = handleCreateProject(projectSite, projectLocation, projectName, projectStatus);
+  const [isLoading, setIsLoading] = useState(true);
 
-    if (success) {
-      // App Router uses searchParams via URL construction
-      router.push(`/projects?success=${encodeURIComponent('Successfully created')}`);
+  useEffect(() => {
+    if (projectParam && projectData) {
+      const [site, location, name] = decodeURIComponent(projectParam).split('-');
+      const project = projectData
+        .find((siteData) => siteData.projectSite === site)
+        ?.projects.find(
+          (project) => project.projectLocation === location && project.projectName === name
+        );
+
+      if (project) {
+        setProjectSite(site);
+        setProjectLocation(location);
+        setProjectName(name);
+        setProjectStatus(project.projectStatus);
+      } else {
+        toast.error('Project not found');
+        router.push('/projects');
+      }
     }
+    setIsLoading(false);
+  }, [
+    projectParam,
+    projectData,
+    setProjectSite,
+    setProjectLocation,
+    setProjectName,
+    setProjectStatus,
+    router,
+  ]);
+
+  function handleUpdate() {
+    if (!projectSite || !projectLocation || !projectName || !projectStatus) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    setProjectData((prevProjectData) =>
+      prevProjectData.map((site) => {
+        if (site.projectSite === projectSite) {
+          return {
+            ...site,
+            projects: site.projects.map((project) => {
+              if (
+                project.projectLocation === projectLocation &&
+                project.projectName === projectName
+              ) {
+                return {
+                  ...project,
+                  projectLocation,
+                  projectName,
+                  projectStatus,
+                };
+              }
+              return project;
+            }),
+          };
+        }
+        return site;
+      })
+    );
+
+    toast.success('Project updated successfully');
+    router.push('/projects');
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -46,13 +109,13 @@ export default function Create() {
       <div className='flex flex-col gap-5 py-8'>
         <div className='flex flex-col gap-2'>
           <DynamicBreadcrumbs />
-          <h1 className='text-3xl font-bold'>Create Projects</h1>
+          <h1 className='text-3xl font-bold'>Edit Project</h1>
         </div>
         <Card className='w-full gap-0 p-0'>
           <div className='flex flex-col gap-2 border-b p-5'>
             <CardTitle>Project Details</CardTitle>
             <CardDescription>
-              Create project site, location, and name. These will be used to separate time entries
+              Update project site, location, and name. These will be used to separate time entries
               of the employees.
             </CardDescription>
           </div>
@@ -98,7 +161,7 @@ export default function Create() {
                 Status <span className='text-red-600'>*</span>
               </Label>
               <RadioGroup
-                defaultValue='enabled'
+                defaultValue={projectStatus}
                 className='flex'
                 onValueChange={(value) => setProjectStatus(value)}
               >
@@ -121,20 +184,10 @@ export default function Create() {
         <div className='flex flex-col lg:flex-row gap-2'>
           <Button
             className='cursor-pointer'
-            onClick={() => handleCreate(projectSite, projectLocation, projectName, projectStatus)}
+            onClick={handleUpdate}
             disabled={!projectSite || !projectLocation || !projectName || !projectStatus}
           >
-            Create
-          </Button>
-          <Button
-            className='cursor-pointer'
-            onClick={() =>
-              handleCreateProject(projectSite, projectLocation, projectName, projectStatus)
-            }
-            disabled={!projectSite || !projectLocation || !projectName || !projectStatus}
-            variant={'outline'}
-          >
-            Create & create another
+            Update
           </Button>
           <CustomLink href='/projects' className='cursor-pointer' variant={'outline'}>
             Cancel
