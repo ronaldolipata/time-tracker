@@ -24,8 +24,8 @@ const items = [
     icon: FileText,
   },
   {
-    title: 'Period',
-    url: '/period',
+    title: 'Periods',
+    url: '/periods',
     icon: Calendar,
   },
 ];
