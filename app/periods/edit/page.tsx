@@ -13,8 +13,8 @@ import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Holidays } from '@/context/types';
-import { SuspenseWrapper } from '@/components/ui/SuspenseWrapper';
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { SuspenseWrapper } from '@/components/ui/suspense-wrapper';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 
 function EditContent() {
   const {
