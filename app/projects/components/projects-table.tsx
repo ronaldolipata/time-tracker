@@ -1,4 +1,4 @@
-import { useState, MouseEventHandler, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Search, SquarePen, Trash, ArrowUpDown, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -197,28 +197,28 @@ export default function ProjectsTable() {
     projectSite: string,
     projectLocation: string,
     projectName: string
-  ): MouseEventHandler<HTMLButtonElement> {
-    return (event) => {
-      event.preventDefault();
-      setProjectData(
-        (prevProjectData: ProjectData) =>
-          prevProjectData
-            .map((site) => ({
-              ...site,
-              projects: site.projects.filter(
-                (project) =>
-                  !(
-                    site.projectSite === projectSite &&
-                    project.projectLocation === projectLocation &&
-                    project.projectName === projectName
-                  )
-              ),
-            }))
-            .filter((site) => site.projects.length > 0) // Remove empty project sites
-      );
+  ): void {
+    if (!projectData) return;
 
-      toast.success('Project has been successfully deleted');
-    };
+    const updatedProjectData = projectData
+      .map((site) => {
+        if (site.projectSite === projectSite) {
+          return {
+            ...site,
+            projects: site.projects.filter(
+              (project) =>
+                !(
+                  project.projectLocation === projectLocation && project.projectName === projectName
+                )
+            ),
+          };
+        }
+        return site;
+      })
+      .filter((site) => site.projects.length > 0);
+
+    setProjectData(updatedProjectData);
+    toast.success('Project has been successfully deleted');
   }
 
   // Memoize this calculation to avoid recalculating on every render
@@ -428,7 +428,7 @@ export default function ProjectsTable() {
                           projectSite={projectSite}
                           projectLocation={projectLocation}
                           projectName={projectName}
-                          handleDeleteProject={handleDeleteProject}
+                          onDelete={handleDeleteProject}
                         />
                       </div>
                     </TableCell>

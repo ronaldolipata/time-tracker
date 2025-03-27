@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -13,6 +12,7 @@ import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { Label } from '@/components/ui/label';
 import { toast } from 'react-toastify';
+import UpdateProjectDialog from './components/update-project-dialog';
 
 export default function Edit() {
   const router = useRouter();
@@ -182,13 +182,14 @@ export default function Edit() {
           </div>
         </Card>
         <div className='flex flex-col lg:flex-row gap-2'>
-          <Button
-            className='cursor-pointer'
-            onClick={handleUpdate}
+          <UpdateProjectDialog
+            projectSite={projectSite}
+            projectLocation={projectLocation}
+            projectName={projectName}
+            projectStatus={projectStatus}
+            onUpdate={handleUpdate}
             disabled={!projectSite || !projectLocation || !projectName || !projectStatus}
-          >
-            Update
-          </Button>
+          />
           <CustomLink href='/projects' className='cursor-pointer' variant={'outline'}>
             Cancel
           </CustomLink>

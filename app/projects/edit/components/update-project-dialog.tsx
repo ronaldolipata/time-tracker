@@ -13,43 +13,33 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { formatPeriod } from '@/utils/format-period';
 
-interface UpdatePeriodDialogProps {
-  startDate: string;
-  endDate: string;
-  onUpdate: (startDate: string, endDate: string) => void;
+interface UpdateProjectDialogProps {
+  projectSite: string;
+  projectLocation: string;
+  projectName: string;
+  projectStatus: string;
+  onUpdate: () => void;
   disabled?: boolean;
 }
 
-export default function UpdatePeriodDialog({
-  startDate,
-  endDate,
+export default function UpdateProjectDialog({
+  projectSite,
+  projectLocation,
+  projectName,
+  projectStatus,
   onUpdate,
   disabled = false,
-}: UpdatePeriodDialogProps) {
+}: UpdateProjectDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleUpdate = () => {
-    if (!startDate || !endDate) {
+    if (!projectSite || !projectLocation || !projectName || !projectStatus) {
       return;
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      return;
-    }
-
-    onUpdate(startDate, endDate);
+    onUpdate();
     setIsOpen(false);
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return 'Invalid date';
-    const date = new Date(dateString);
-    return isNaN(date.getTime()) ? 'Invalid date' : formatPeriod(date);
   };
 
   return (
@@ -61,17 +51,18 @@ export default function UpdatePeriodDialog({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Update Payroll Period</AlertDialogTitle>
+          <AlertDialogTitle>Update Project</AlertDialogTitle>
           <div className='space-y-6'>
             <AlertDialogDescription className='text-muted-foreground'>
-              Are you sure you want to update this period?
+              Are you sure you want to update this project?
             </AlertDialogDescription>
             <div className='grid gap-1 bg-muted p-5 text-sm rounded-md'>
               <p className='font-medium text-foreground'>Changes to be made:</p>
               <ul className='grid gap-1 list-disc list-inside mt-1 space-y-1 text-muted-foreground'>
-                <li>Start date: {formatDate(startDate)}</li>
-                <li>End date: {formatDate(endDate)}</li>
-                <li>Holiday settings</li>
+                <li>Site: {projectSite}</li>
+                <li>Location: {projectLocation}</li>
+                <li>Name: {projectName}</li>
+                <li>Status: {projectStatus}</li>
               </ul>
             </div>
           </div>
