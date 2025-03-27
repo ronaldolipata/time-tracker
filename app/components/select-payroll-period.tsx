@@ -14,7 +14,7 @@ export default function PayrollPeriod() {
   const { payrollPeriod, setSelectedPayrollPeriod, setIsSelectProjectEnabled } = useTimeTracker();
 
   return (
-    <Card className='w-full gap-4 p-4'>
+    <Card className='w-full gap-6 p-6'>
       <div className='flex flex-col gap-2'>
         <CardTitle>Select Payroll Period</CardTitle>
         <CardDescription>Select to enter project details</CardDescription>
