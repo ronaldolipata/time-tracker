@@ -126,7 +126,7 @@ export default function CollapsibleHolidaySelection({
         <div className='grid gap-5 border-t p-5 -mt-6 overflow-auto'>
           <div className='grid gap-2'>
             <h3 className='text-lg font-semibold'>Set Holidays</h3>
-            <p className='text-sm text-gray-600'>
+            <p className='text-sm text-muted-foreground'>
               Select dates to mark as holidays. You can choose between regular holidays, special
               non-working holidays, and special working holidays.
             </p>
@@ -135,7 +135,7 @@ export default function CollapsibleHolidaySelection({
           <div className='rounded-md border'>
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className='bg-muted/50'>
                   <TableHead className='pl-4'>Date</TableHead>
                   <TableHead className='p-2 text-center'>Regular</TableHead>
                   <TableHead className='p-2 text-center'>Special Non-working</TableHead>
@@ -151,7 +151,7 @@ export default function CollapsibleHolidaySelection({
                         type='checkbox'
                         checked={tempHolidays.regular.dates.has(date)}
                         onChange={() => handleHolidayCheckboxChange(date, 'regular')}
-                        className='h-6 shadow-none'
+                        className='h-6 shadow-none cursor-pointer'
                       />
                     </TableCell>
                     <TableCell className='p-2 text-center'>
@@ -161,7 +161,7 @@ export default function CollapsibleHolidaySelection({
                         onChange={() =>
                           handleHolidayCheckboxChange(date, 'specialNonWorkingHoliday')
                         }
-                        className='h-6 shadow-none'
+                        className='h-6 shadow-none cursor-p'
                       />
                     </TableCell>
                     <TableCell className='p-2 text-center'>
@@ -169,7 +169,7 @@ export default function CollapsibleHolidaySelection({
                         type='checkbox'
                         checked={tempHolidays.specialWorkingHoliday.dates.has(date)}
                         onChange={() => handleHolidayCheckboxChange(date, 'specialWorkingHoliday')}
-                        className='h-6 shadow-none'
+                        className='h-6 shadow-none cursor-p'
                       />
                     </TableCell>
                   </TableRow>

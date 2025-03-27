@@ -290,10 +290,9 @@ export default function ProjectsTable() {
 
       <Table>
         <TableHeader>
-          <TableRow className='bg-gray-50 border-t'>
+          <TableRow className='bg-muted/50 border-t'>
             <TableHead className='py-4 px-3 w-12'>
               <Checkbox
-                className='bg-white'
                 id='select-all-checkbox'
                 checked={isAllSelected}
                 onCheckedChange={(checked) => {
@@ -351,10 +350,9 @@ export default function ProjectsTable() {
               projects.map(({ projectStatus, projectName }, subIndex) => {
                 const projectId = `${projectLocation}-${projectName}`;
                 return (
-                  <TableRow key={projectId} className={subIndex % 2 === 0 ? '' : 'bg-gray-50'}>
+                  <TableRow key={projectId} className={subIndex % 2 === 0 ? '' : 'bg-muted/50'}>
                     <TableCell className='py-4 px-3 w-12'>
                       <Checkbox
-                        className='bg-white'
                         id={`project-checkbox-${projectId}`}
                         checked={selectedProjects.includes(projectId)}
                         onCheckedChange={() => handleSelectProject(projectId)}
@@ -364,7 +362,7 @@ export default function ProjectsTable() {
                     <TableCell className='py-4 px-3'>{projectLocation}</TableCell>
                     <TableCell className='py-4 px-3'>{projectName}</TableCell>
                     <TableCell className='first-letter:uppercase py-4 px-3'>
-                      <span className='px-3 py-[3px] bg-green-100 text-green-600 rounded-full'>
+                      <span className='px-3 py-[3px] bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded-full'>
                         {projectStatus}
                       </span>
                     </TableCell>

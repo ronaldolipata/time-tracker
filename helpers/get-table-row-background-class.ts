@@ -7,11 +7,11 @@ export function getTableRowBackgroundClass(date: string, holidays: Holidays): st
   const isHoliday = isHolidayDay(date, holidays);
 
   if (isSunday && isHoliday) {
-    return 'bg-purple-200 hover:bg-purple-300';
+    return 'bg-purple-300 hover:bg-purple-400 text-purple-900';
   } else if (isSunday) {
-    return 'bg-red-200 hover:bg-red-300';
+    return 'bg-red-300 hover:bg-red-400 text-red-900';
   } else if (isHoliday) {
-    return 'bg-blue-200 hover:bg-blue-300';
+    return 'bg-blue-300 hover:bg-blue-400 text-blue-900';
   } else {
     return '';
   }
