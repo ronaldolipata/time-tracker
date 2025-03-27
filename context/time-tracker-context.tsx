@@ -8,6 +8,7 @@ import {
   useCallback,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from 'react';
 import { EmployeeData, Holidays, PayrollPeriod, ProjectData, TimeEntry } from './types';
 import { toast } from 'react-toastify';
@@ -106,6 +107,61 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     specialNonWorkingHoliday: { dates: new Set() },
     specialWorkingHoliday: { dates: new Set() },
   });
+
+  // Load data from localStorage on client-side only
+  useEffect(() => {
+    // Load project data
+    const savedProjectData = localStorage.getItem('projectData');
+    if (savedProjectData) {
+      setProjectData(JSON.parse(savedProjectData));
+    }
+
+    // Load payroll periods
+    const savedPeriods = localStorage.getItem('payrollPeriod');
+    if (savedPeriods) {
+      const parsed = JSON.parse(savedPeriods);
+      const periods = parsed.map(
+        (period: {
+          startDate: string;
+          endDate: string;
+          holidays: {
+            regular: string[];
+            specialNonWorkingHoliday: string[];
+            specialWorkingHoliday: string[];
+          };
+        }) => ({
+          startDate: new Date(period.startDate),
+          endDate: new Date(period.endDate),
+          holidays: {
+            regular: new Set(period.holidays.regular),
+            specialNonWorkingHoliday: new Set(period.holidays.specialNonWorkingHoliday),
+            specialWorkingHoliday: new Set(period.holidays.specialWorkingHoliday),
+          },
+        })
+      );
+      setPayrollPeriod(periods);
+    }
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Save to localStorage whenever projectData changes
+  useEffect(() => {
+    localStorage.setItem('projectData', JSON.stringify(projectData));
+  }, [projectData]);
+
+  // Save to localStorage whenever payrollPeriod changes
+  useEffect(() => {
+    // Convert Date objects to ISO strings and Sets to arrays for storage
+    const periodsForStorage = payrollPeriod.map((period) => ({
+      startDate: period.startDate.toISOString(),
+      endDate: period.endDate.toISOString(),
+      holidays: {
+        regular: Array.from(period.holidays.regular),
+        specialNonWorkingHoliday: Array.from(period.holidays.specialNonWorkingHoliday),
+        specialWorkingHoliday: Array.from(period.holidays.specialWorkingHoliday),
+      },
+    }));
+    localStorage.setItem('payrollPeriod', JSON.stringify(periodsForStorage));
+  }, [payrollPeriod]);
 
   // UI
   const [isSelectProjectEnabled, setIsSelectProjectEnabled] = useState<boolean>(false);
