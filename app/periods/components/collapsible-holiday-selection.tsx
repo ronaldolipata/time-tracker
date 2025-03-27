@@ -114,7 +114,7 @@ export default function CollapsibleHolidaySelection({
   return (
     <div className='flex flex-col gap-5'>
       <Button
-        className='lg:self-end focus:bg-blue-900 hover:bg-blue-900 cursor-pointer flex items-center gap-2 mx-6 mb-6'
+        className='lg:self-end cursor-pointer flex items-center gap-2 mx-6 mb-6'
         disabled={!isEditMode && (!startDate || !endDate)}
         onClick={() => setIsExpanded(!isExpanded)}
       >
