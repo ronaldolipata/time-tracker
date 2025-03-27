@@ -215,7 +215,7 @@ export default function PeriodsTable() {
       <Table>
         <TableHeader>
           <TableRow className='bg-gray-50 border-t'>
-            <TableHead className='py-4 px-3 w-12'>
+            <TableHead className='py-4 px-3'>
               <Checkbox
                 id='select-all-checkbox'
                 checked={isAllSelected}
@@ -264,9 +264,9 @@ export default function PeriodsTable() {
                 />
               </div>
             </TableHead>
-            <TableHead className='py-4 px-3 w-12'>Regular</TableHead>
-            <TableHead className='py-4 px-3 w-12'>Special Non-working</TableHead>
-            <TableHead className='py-4 px-3 w-12'>Special Working</TableHead>
+            <TableHead className='py-4 px-3'>Regular</TableHead>
+            <TableHead className='py-4 px-3'>Special Non-working</TableHead>
+            <TableHead className='py-4 px-3'>Special Working</TableHead>
             <TableHead className='py-4 px-3 text-center'>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -276,7 +276,7 @@ export default function PeriodsTable() {
               const periodId = `period-${index}`;
               return (
                 <TableRow key={periodId} className={index % 2 === 0 ? '' : 'bg-gray-50'}>
-                  <TableCell className='py-4 px-3 w-12'>
+                  <TableCell className='py-4 px-3'>
                     <Checkbox
                       id={`period-checkbox-${periodId}`}
                       checked={selectedPeriods.includes(periodId)}
