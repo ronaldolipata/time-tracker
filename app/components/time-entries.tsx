@@ -9,7 +9,7 @@ export default function TimeEntries() {
   return (
     <Card className='w-full min-w-[189px] gap-5 grow-1 p-5'>
       <div className='flex flex-col gap-2'>
-        <CardTitle>Time Entries</CardTitle>
+        <CardTitle>Paste Time Entries</CardTitle>
         <CardDescription>e.g. DOE, JOHN 8:00 AM 5:00 PM</CardDescription>
       </div>
       <Input

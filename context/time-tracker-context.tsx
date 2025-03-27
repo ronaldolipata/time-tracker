@@ -17,12 +17,14 @@ import { calculateSummary } from '@/helpers/calculate-summary';
 
 type TimeTrackerType = {
   // Project Details
+  projectSite: string;
   projectLocation: string;
   projectStatus: string;
   projectName: string;
+  setProjectSite: Dispatch<SetStateAction<string>>;
   setProjectLocation: Dispatch<SetStateAction<string>>;
-  setProjectName: Dispatch<SetStateAction<string>>;
   setProjectStatus: Dispatch<SetStateAction<string>>;
+  setProjectName: Dispatch<SetStateAction<string>>;
   setProjectData: Dispatch<SetStateAction<ProjectData>>;
 
   // Selected data
@@ -58,6 +60,7 @@ type TimeTrackerType = {
 
   // Functions
   handleCreateProject: (
+    projectSite: string,
     projectLocation: string,
     projectName: string,
     projectStatus: string
@@ -65,7 +68,7 @@ type TimeTrackerType = {
   handleClearProjectDetails: () => void;
   handleApplyDates: (startDate: string, endDate: string) => void;
   handlePaste: (event: React.ClipboardEvent<HTMLInputElement>) => void;
-  handleCopy: (projectLocation: string, projectName: string) => void;
+  handleCopy: (projectSite: string, projectLocation: string, projectName: string) => void;
   handleCreatePayrollPeriod: (startDate: Date, endDate: Date, holidays: Holidays) => void;
 
   projectData: ProjectData;
@@ -76,6 +79,7 @@ const TimeTrackerContext = createContext<TimeTrackerType | undefined>(undefined)
 
 export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   // Project Details
+  const [projectSite, setProjectSite] = useState<string>('');
   const [projectLocation, setProjectLocation] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<string>('enabled');
   const [projectName, setProjectName] = useState<string>('');
@@ -185,11 +189,12 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   }
 
   function handleCreateProject(
+    projectSite: string,
     projectLocation: string,
     projectName: string,
     projectStatus: string
   ): boolean {
-    if (!projectLocation || !projectName || !projectStatus) {
+    if (!projectSite || !projectLocation || !projectName || !projectStatus) {
       toast.error('Please the required details');
       return false;
     }
@@ -197,29 +202,29 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     let isProjectAdded = false; // Track if a project was actually added
 
     setProjectData((prev) => {
-      const existingLocationIndex = prev.findIndex(
-        (data) => data.projectLocation.toLowerCase() === projectLocation.toLowerCase()
+      const existingSiteIndex = prev.findIndex(
+        (data) => data.projectSite.toLowerCase() === projectSite.toLowerCase()
       );
 
-      if (existingLocationIndex !== -1) {
-        const existingLocation = prev[existingLocationIndex];
+      if (existingSiteIndex !== -1) {
+        const existingSite = prev[existingSiteIndex];
 
-        const existingProject = existingLocation.projects.find(
+        const existingProject = existingSite.projects.find(
           (project) => project.projectName.toLowerCase() === projectName.toLowerCase()
         );
 
         if (existingProject) {
-          toast.error('Name already exists for the location');
+          toast.error('Name already exists for the site');
           return prev; // No changes, return existing state
         }
 
-        // Add new project to existing projectLocation
+        // Add new project to existing site
         const updatedProjectData = [...prev];
-        updatedProjectData[existingLocationIndex] = {
-          ...existingLocation,
+        updatedProjectData[existingSiteIndex] = {
+          ...existingSite,
           projects: [
-            ...existingLocation.projects,
-            { projectName, projectStatus, employeeData: [] },
+            ...existingSite.projects,
+            { projectLocation, projectName, projectStatus, employeeData: [] },
           ],
         };
 
@@ -232,13 +237,15 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       return [
         ...prev,
         {
+          projectSite,
           projectLocation,
-          projects: [{ projectName, projectStatus, employeeData: [] }],
+          projects: [{ projectLocation, projectName, projectStatus, employeeData: [] }],
         },
       ];
     });
 
     if (isProjectAdded) {
+      setProjectSite('');
       setProjectLocation('');
       setProjectName('');
       toast.success('Successfully created');
@@ -349,7 +356,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
 
     setProjectData((prev) => {
       const updatedData = prev.map((data) => {
-        if (data.projectLocation === selectedLocation) {
+        if (data.projectSite === projectSite) {
           return {
             ...data,
             projects: data.projects.map((project) => {
@@ -375,9 +382,9 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   const formatValue = (value: number) => (value > 0 ? value.toFixed(2).replace(/\.00$/, '') : '');
 
   const handleCopy = useCallback(
-    (projectLocation: string, name: string) => {
+    (projectSite: string, projectLocation: string, name: string) => {
       // Find the relevant project data based on projectLocation and name
-      const locationData = projectData.find((data) => data.projectLocation === projectLocation);
+      const locationData = projectData.find((data) => data.projectSite === projectSite);
 
       if (!locationData) {
         toast.error(`Location "${projectLocation}" not found`);
@@ -420,7 +427,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       navigator.clipboard.writeText(data);
       toast.success(`Copied data to clipboard!`);
     },
-    [projectData]
+    [projectData, projectSite]
   );
 
   const handleCreatePayrollPeriod = (startDate: Date, endDate: Date, holidays: Holidays): void => {
@@ -467,9 +474,11 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     <TimeTrackerContext.Provider
       value={{
         // Project Details
+        projectSite,
         projectLocation,
         projectName,
         projectStatus,
+        setProjectSite,
         setProjectLocation,
         setProjectName,
         setProjectStatus,

@@ -1,4 +1,4 @@
-import { useState, MouseEventHandler, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Search, SquarePen, Trash, ArrowUpDown, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 type SortDirection = 'asc' | 'desc' | null;
-type SortField = 'location' | 'name' | null;
+type SortField = 'site' | 'location' | 'name' | null;
 
 export default function ProjectsTable() {
   const { projectData, setProjectData } = useTimeTracker();
@@ -53,18 +53,24 @@ export default function ProjectsTable() {
     if (!projectData || projectData.length === 0) return [];
 
     // First, flatten the project data for easier processing
-    const flattenedProjects = projectData.flatMap((location) =>
-      location.projects.map((project) => ({
-        projectLocation: location.projectLocation,
-        ...project,
-        id: `${location.projectLocation}-${project.projectName}`,
+    const flattenedProjects = projectData.flatMap((site) =>
+      site.projects.map((project) => ({
+        projectSite: site.projectSite,
+        projectLocation: project.projectLocation,
+        projectName: project.projectName,
+        projectStatus: project.projectStatus,
+        employeeData: project.employeeData,
+        id: `${site.projectSite}-${project.projectLocation}-${project.projectName}`,
       }))
     );
 
     // Filter by search term
     const filteredProjects = searchTerm
-      ? flattenedProjects.filter((project) =>
-          project.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+      ? flattenedProjects.filter(
+          (project) =>
+            project.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            project.projectSite.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            project.projectLocation.toLowerCase().includes(searchTerm.toLowerCase())
         )
       : flattenedProjects;
 
@@ -73,7 +79,9 @@ export default function ProjectsTable() {
       filteredProjects.sort((a, b) => {
         let comparison = 0;
 
-        if (sortField === 'location') {
+        if (sortField === 'site') {
+          comparison = a.projectSite.localeCompare(b.projectSite);
+        } else if (sortField === 'location') {
           comparison = a.projectLocation.localeCompare(b.projectLocation);
         } else if (sortField === 'name') {
           comparison = a.projectName.localeCompare(b.projectName);
@@ -83,19 +91,20 @@ export default function ProjectsTable() {
       });
     }
 
-    // Group back by location for rendering
+    // Group back by site and location for rendering
     const groupedProjects: ProjectData = [];
 
     filteredProjects.forEach((project) => {
-      const locationIndex = groupedProjects.findIndex(
-        (loc) => loc.projectLocation === project.projectLocation
+      const siteIndex = groupedProjects.findIndex(
+        (site) => site.projectSite === project.projectSite
       );
 
-      if (locationIndex === -1) {
+      if (siteIndex === -1) {
         groupedProjects.push({
-          projectLocation: project.projectLocation,
+          projectSite: project.projectSite,
           projects: [
             {
+              projectLocation: project.projectLocation,
               projectName: project.projectName,
               projectStatus: project.projectStatus,
               employeeData: project.employeeData,
@@ -103,11 +112,18 @@ export default function ProjectsTable() {
           ],
         });
       } else {
-        groupedProjects[locationIndex].projects.push({
-          projectName: project.projectName,
-          projectStatus: project.projectStatus,
-          employeeData: project.employeeData,
-        });
+        const locationIndex = groupedProjects[siteIndex].projects.findIndex(
+          (p) => p.projectLocation === project.projectLocation
+        );
+
+        if (locationIndex === -1) {
+          groupedProjects[siteIndex].projects.push({
+            projectLocation: project.projectLocation,
+            projectName: project.projectName,
+            projectStatus: project.projectStatus,
+            employeeData: project.employeeData,
+          });
+        }
       }
     });
 
@@ -116,7 +132,7 @@ export default function ProjectsTable() {
 
   // Calculate total number of filtered projects and whether records were found
   const totalFilteredProjects = useMemo(
-    () => processedProjectData.reduce((sum, location) => sum + location.projects.length, 0),
+    () => processedProjectData.reduce((sum, site) => sum + site.projects.length, 0),
     [processedProjectData]
   );
 
@@ -142,8 +158,10 @@ export default function ProjectsTable() {
 
   function handleSelectAll(): void {
     if (processedProjectData && processedProjectData.length > 0) {
-      const allProjectIds = processedProjectData.flatMap((location) =>
-        location.projects.map((project) => `${location.projectLocation}-${project.projectName}`)
+      const allProjectIds = processedProjectData.flatMap((site) =>
+        site.projects.map(
+          (project) => `${site.projectSite}-${project.projectLocation}-${project.projectName}`
+        )
       );
       setSelectedProjects(allProjectIds);
     }
@@ -158,14 +176,16 @@ export default function ProjectsTable() {
       setProjectData(
         (prevProjectData: ProjectData) =>
           prevProjectData
-            .map((location) => ({
-              ...location,
-              projects: location.projects.filter(
+            .map((site) => ({
+              ...site,
+              projects: site.projects.filter(
                 (project) =>
-                  !selectedProjects.includes(`${location.projectLocation}-${project.projectName}`)
+                  !selectedProjects.includes(
+                    `${site.projectSite}-${project.projectLocation}-${project.projectName}`
+                  )
               ),
             }))
-            .filter((location) => location.projects.length > 0) // Remove empty project locations
+            .filter((site) => site.projects.length > 0) // Remove empty project sites
       );
 
       toast.success('Bulk deletion has been successful');
@@ -174,27 +194,31 @@ export default function ProjectsTable() {
   }
 
   function handleDeleteProject(
+    projectSite: string,
     projectLocation: string,
     projectName: string
-  ): MouseEventHandler<HTMLButtonElement> | undefined {
-    setProjectData(
-      (prevProjectData: ProjectData) =>
-        prevProjectData
-          .map((location) => ({
-            ...location,
-            projects: location.projects.filter(
+  ): void {
+    if (!projectData) return;
+
+    const updatedProjectData = projectData
+      .map((site) => {
+        if (site.projectSite === projectSite) {
+          return {
+            ...site,
+            projects: site.projects.filter(
               (project) =>
                 !(
-                  location.projectLocation === projectLocation &&
-                  project.projectName === projectName
+                  project.projectLocation === projectLocation && project.projectName === projectName
                 )
             ),
-          }))
-          .filter((location) => location.projects.length > 0) // Remove empty project locations
-    );
+          };
+        }
+        return site;
+      })
+      .filter((site) => site.projects.length > 0);
 
+    setProjectData(updatedProjectData);
     toast.success('Project has been successfully deleted');
-    return;
   }
 
   // Memoize this calculation to avoid recalculating on every render
@@ -309,6 +333,23 @@ export default function ProjectsTable() {
             <TableHead className='py-4 px-3'>
               <div
                 className='flex items-center cursor-pointer'
+                onClick={() => handleSort('site')}
+                role='button'
+                tabIndex={0}
+                aria-label={`Sort by site ${
+                  sortField === 'site' && sortDirection === 'asc' ? 'descending' : 'ascending'
+                }`}
+              >
+                Site
+                <ArrowUpDown
+                  size={16}
+                  className={`ml-1 transition-transform ${getSortIcon('site')}`}
+                />
+              </div>
+            </TableHead>
+            <TableHead className='py-4 px-3'>
+              <div
+                className='flex items-center cursor-pointer'
                 onClick={() => handleSort('location')}
                 role='button'
                 tabIndex={0}
@@ -346,9 +387,9 @@ export default function ProjectsTable() {
         </TableHeader>
         <TableBody>
           {isRecordsFound ? (
-            processedProjectData.flatMap(({ projectLocation, projects }) =>
-              projects.map(({ projectStatus, projectName }, subIndex) => {
-                const projectId = `${projectLocation}-${projectName}`;
+            processedProjectData.flatMap(({ projectSite, projects }) =>
+              projects.map(({ projectStatus, projectName, projectLocation }, subIndex) => {
+                const projectId = `${projectSite}-${projectLocation}-${projectName}`;
                 return (
                   <TableRow key={projectId} className={subIndex % 2 === 0 ? '' : 'bg-muted/50'}>
                     <TableCell className='py-4 px-3 w-12'>
@@ -359,10 +400,17 @@ export default function ProjectsTable() {
                         aria-label={`Select ${projectName} project`}
                       />
                     </TableCell>
+                    <TableCell className='py-4 px-3'>{projectSite}</TableCell>
                     <TableCell className='py-4 px-3'>{projectLocation}</TableCell>
                     <TableCell className='py-4 px-3'>{projectName}</TableCell>
                     <TableCell className='first-letter:uppercase py-4 px-3'>
-                      <span className='px-3 py-[3px] bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded-full'>
+                      <span
+                        className={`px-3 py-[3px] rounded-full ${
+                          projectStatus === 'enabled'
+                            ? 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300'
+                            : 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300'
+                        }`}
+                      >
                         {projectStatus}
                       </span>
                     </TableCell>
@@ -377,9 +425,10 @@ export default function ProjectsTable() {
                           Edit
                         </Link>
                         <DeleteDialog
+                          projectSite={projectSite}
                           projectLocation={projectLocation}
                           projectName={projectName}
-                          handleDeleteProject={handleDeleteProject}
+                          onDelete={handleDeleteProject}
                         />
                       </div>
                     </TableCell>
