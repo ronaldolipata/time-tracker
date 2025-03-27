@@ -64,7 +64,7 @@ export default function HolidaySelection() {
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className='bg-muted/50'>
               <TableHead className='pl-4'>Date</TableHead>
               <TableHead className='p-2 text-center'>Regular</TableHead>
               <TableHead className='p-2 text-center'>Special Non-working</TableHead>

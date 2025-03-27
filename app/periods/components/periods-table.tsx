@@ -214,10 +214,9 @@ export default function PeriodsTable() {
 
       <Table>
         <TableHeader>
-          <TableRow className='bg-gray-50 border-t'>
+          <TableRow className='bg-muted/50 border-t'>
             <TableHead className='py-4 px-3'>
               <Checkbox
-                className='bg-white'
                 id='select-all-checkbox'
                 checked={isAllSelected}
                 onCheckedChange={(checked) => {
@@ -276,10 +275,9 @@ export default function PeriodsTable() {
             processedPeriodData.map((period, index) => {
               const periodId = `period-${index}`;
               return (
-                <TableRow key={periodId} className={index % 2 === 0 ? '' : 'bg-gray-50'}>
+                <TableRow key={periodId} className={index % 2 === 0 ? '' : 'bg-muted/50'}>
                   <TableCell className='py-4 px-3'>
                     <Checkbox
-                      className='bg-white'
                       id={`period-checkbox-${periodId}`}
                       checked={selectedPeriods.includes(periodId)}
                       onCheckedChange={() => handleSelectPeriod(periodId)}
@@ -295,7 +293,7 @@ export default function PeriodsTable() {
                       {Array.from(period.holidays.regular).map((date) => (
                         <span
                           key={date}
-                          className='px-3 py-[3px] font-medium bg-blue-100 text-blue-600 rounded-full text-sm'
+                          className='px-3 py-[3px] font-medium bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-full text-sm'
                         >
                           {formatPeriod(new Date(date))}
                         </span>
@@ -307,7 +305,7 @@ export default function PeriodsTable() {
                       {Array.from(period.holidays.specialNonWorkingHoliday).map((date) => (
                         <span
                           key={date}
-                          className='px-3 py-[3px] font-medium bg-blue-100 text-blue-600 rounded-full text-sm'
+                          className='px-3 py-[3px] font-medium bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-full text-sm'
                         >
                           {formatPeriod(new Date(date))}
                         </span>
@@ -319,7 +317,7 @@ export default function PeriodsTable() {
                       {Array.from(period.holidays.specialWorkingHoliday).map((date) => (
                         <span
                           key={date}
-                          className='px-3 py-[3px] font-medium bg-blue-100 text-blue-600 rounded-full text-sm'
+                          className='px-3 py-[3px] font-medium bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-full text-sm'
                         >
                           {formatPeriod(new Date(date))}
                         </span>

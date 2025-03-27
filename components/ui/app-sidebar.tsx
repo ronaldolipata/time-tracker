@@ -9,8 +9,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const items = [
   {
@@ -52,6 +54,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className='p-4'>
+        <ThemeToggle />
+      </SidebarFooter>
     </Sidebar>
   );
 }

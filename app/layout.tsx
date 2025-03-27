@@ -4,6 +4,7 @@ import './globals.css';
 import { TimeTrackerProvider } from '@/context/time-tracker-context';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/ui/app-sidebar';
+import { ThemeProvider } from '@/context/theme-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,25 +28,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang='en' suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <TimeTrackerProvider>
-          <div className='min-h-screen flex flex-col'>
-            <div className='flex-grow'>
-              <div className='2xl:w-[100rem] lg:mx-auto'>
-                <div className='w-full px-5 md:px-8 mx-auto'>
-                  <SidebarProvider>
-                    <AppSidebar />
-                    <main className='w-full py-6'>
-                      <SidebarTrigger />
-                      {children}
-                    </main>
-                  </SidebarProvider>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TimeTrackerProvider>
+            <div className='min-h-screen flex flex-col'>
+              <div className='flex-grow'>
+                <div className='2xl:w-[100rem] lg:mx-auto'>
+                  <div className='w-full px-5 md:px-8 mx-auto'>
+                    <SidebarProvider>
+                      <AppSidebar />
+                      <main className='w-full py-6'>
+                        <SidebarTrigger />
+                        {children}
+                      </main>
+                    </SidebarProvider>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </TimeTrackerProvider>
+          </TimeTrackerProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
