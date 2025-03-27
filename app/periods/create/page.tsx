@@ -13,8 +13,10 @@ import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Holidays } from '@/context/types';
+import { SuspenseWrapper } from '@/components/ui/SuspenseWrapper';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-export default function Create() {
+function CreateContent() {
   const {
     startDate,
     endDate,
@@ -121,5 +123,15 @@ export default function Create() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function Create() {
+  return (
+    <ErrorBoundary>
+      <SuspenseWrapper>
+        <CreateContent />
+      </SuspenseWrapper>
+    </ErrorBoundary>
   );
 }

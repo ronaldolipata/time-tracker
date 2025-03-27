@@ -1,16 +1,28 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
+import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomLink } from '@/components/custom-link';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import PeriodsTable from './components/periods-table';
+import { SuspenseWrapper } from '@/components/ui/SuspenseWrapper';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-export default function Periods() {
+function PeriodsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const successMessage = searchParams.get('success');
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('success');
+      router.replace(url.pathname);
+    }
+  }, [successMessage, router]);
 
   return (
     <>
@@ -25,28 +37,18 @@ export default function Periods() {
             Create payroll period
           </CustomLink>
         </div>
-        <Suspense fallback={<div>Loading...</div>}>
-          {/* Extract just the part that needs searchParams */}
-          <ProjectSuccessHandler router={router} />
-        </Suspense>
         <PeriodsTable />
       </div>
     </>
   );
 }
 
-function ProjectSuccessHandler({ router }: { router: AppRouterInstance }) {
-  const searchParams = useSearchParams();
-  const successMessage = searchParams.get('success');
-
-  useEffect(() => {
-    if (successMessage) {
-      toast.success(successMessage);
-      const url = new URL(window.location.href);
-      url.searchParams.delete('success');
-      router.replace(url.pathname);
-    }
-  }, [successMessage, router]);
-
-  return null; // This component just handles the side effect
+export default function Periods() {
+  return (
+    <ErrorBoundary>
+      <SuspenseWrapper>
+        <PeriodsContent />
+      </SuspenseWrapper>
+    </ErrorBoundary>
+  );
 }

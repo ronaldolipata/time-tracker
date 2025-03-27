@@ -13,8 +13,10 @@ import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Holidays } from '@/context/types';
+import { SuspenseWrapper } from '@/components/ui/SuspenseWrapper';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-export default function Edit() {
+function EditContent() {
   const {
     startDate,
     endDate,
@@ -184,5 +186,15 @@ export default function Edit() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function Edit() {
+  return (
+    <ErrorBoundary>
+      <SuspenseWrapper>
+        <EditContent />
+      </SuspenseWrapper>
+    </ErrorBoundary>
   );
 }
