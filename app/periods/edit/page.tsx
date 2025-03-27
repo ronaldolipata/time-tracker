@@ -163,15 +163,13 @@ export default function Edit() {
                 onChange={(e) => handleDateChange(e.target.value, setEndDate)}
               />
             </div>
-            <div className='lg:col-span-2'>
-              <CollapsibleHolidaySelection
-                isEditMode={true}
-                datesChanged={datesChanged}
-                tempHolidays={tempHolidays}
-                setTempHolidays={setTempHolidays}
-              />
-            </div>
           </div>
+          <CollapsibleHolidaySelection
+            isEditMode={true}
+            datesChanged={datesChanged}
+            tempHolidays={tempHolidays}
+            setTempHolidays={setTempHolidays}
+          />
         </Card>
         <div className='flex flex-col lg:flex-row gap-2'>
           <UpdatePeriodDialog

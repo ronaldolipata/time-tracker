@@ -91,15 +91,13 @@ export default function Create() {
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
-            <div className='lg:col-span-2'>
-              <CollapsibleHolidaySelection
-                tempHolidays={tempHolidays}
-                setTempHolidays={setTempHolidays}
-                isExpanded={isHolidaySelectionExpanded}
-                onExpandedChange={setIsHolidaySelectionExpanded}
-              />
-            </div>
           </div>
+          <CollapsibleHolidaySelection
+            tempHolidays={tempHolidays}
+            setTempHolidays={setTempHolidays}
+            isExpanded={isHolidaySelectionExpanded}
+            onExpandedChange={setIsHolidaySelectionExpanded}
+          />
         </Card>
         <div className='flex flex-col lg:flex-row gap-2'>
           <Button

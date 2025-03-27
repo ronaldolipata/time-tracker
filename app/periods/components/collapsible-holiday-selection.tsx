@@ -73,7 +73,7 @@ export default function CollapsibleHolidaySelection({
     if (datesChanged) {
       setIsExpanded(false);
     }
-  }, [datesChanged]);
+  }, [datesChanged, setIsExpanded]);
 
   function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
     setTempHolidays((prev: Holidays) => {
@@ -110,7 +110,7 @@ export default function CollapsibleHolidaySelection({
   return (
     <div className='flex flex-col gap-6'>
       <Button
-        className='lg:self-end focus:bg-blue-900 hover:bg-blue-900 cursor-pointer flex items-center gap-2'
+        className='lg:self-end focus:bg-blue-900 hover:bg-blue-900 cursor-pointer flex items-center gap-2 mx-6 mb-6'
         disabled={!isEditMode && (!startDate || !endDate)}
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -119,7 +119,7 @@ export default function CollapsibleHolidaySelection({
       </Button>
 
       {isExpanded && (
-        <div className='grid gap-6'>
+        <div className='grid gap-6 border-t p-6 -mt-6'>
           <div className='grid gap-2'>
             <h3 className='text-lg font-semibold'>Set Holidays</h3>
             <p className='text-sm text-gray-600'>
