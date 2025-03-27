@@ -7,8 +7,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import PeriodsTable from './components/periods-table';
-import { SuspenseWrapper } from '@/components/ui/suspense-wrapper';
-import { ErrorBoundary } from '@/components/ui/error-boundary';
+import { SuspenseWrapper } from '@/components/suspense-wrapper';
+import { ErrorBoundary } from '@/components/error-boundary';
 
 function PeriodsContent() {
   const router = useRouter();

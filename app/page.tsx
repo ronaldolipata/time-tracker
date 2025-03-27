@@ -11,10 +11,10 @@ export default function Home() {
   return (
     <>
       <ToastContainer />
-      <div className='grid gap-6'>
-        <div className='grid gap-6'>
+      <div className='grid gap-5'>
+        <div className='grid gap-5'>
           <h1 className='text-xl font-bold'>Time Tracker</h1>
-          <div className='grid grid-cols-1 xl:grid-cols-4 gap-y-6 xl:gap-6'>
+          <div className='grid grid-cols-1 xl:grid-cols-4 gap-y-5 xl:gap-5'>
             <PayrollPeriod />
             <SelectProject />
             <TimeEntries />

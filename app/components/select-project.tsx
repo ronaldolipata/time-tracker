@@ -32,7 +32,7 @@ export default function SelectProject() {
   }
 
   return (
-    <Card className='col-span-2 w-full gap-6 p-6'>
+    <Card className='col-span-2 w-full gap-5 p-5'>
       <div className='flex flex-col gap-2'>
         <CardTitle>Select Project</CardTitle>
         <CardDescription>Select to paste time entries</CardDescription>
