@@ -39,11 +39,9 @@ type TimeTrackerType = {
   setStartDate: Dispatch<SetStateAction<string>>;
   setEndDate: Dispatch<SetStateAction<string>>;
   payrollPeriod: PayrollPeriod[];
-  setPayrollPeriod: Dispatch<SetStateAction<PayrollPeriod[]>>;
-  dates: string[];
-  setDates: Dispatch<SetStateAction<string[]>>;
 
   // Holidays
+  dates: string[];
   holidays: Holidays;
   setHolidays: Dispatch<SetStateAction<Holidays>>;
 
@@ -66,7 +64,6 @@ type TimeTrackerType = {
   handleApplyDates: (startDate: string, endDate: string) => void;
   handlePaste: (event: React.ClipboardEvent<HTMLInputElement>) => void;
   handleCopy: (projectLocation: string, projectName: string) => void;
-  handleCreatePayrollPeriod: (startDate: Date, endDate: Date, holidays: Holidays) => void;
 
   projectData: ProjectData;
   employeeData: EmployeeData[];
@@ -84,11 +81,6 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
   const [selectedPayrollPeriod, setSelectedPayrollPeriod] = useState<PayrollPeriod>({
     startDate: new Date(),
     endDate: new Date(),
-    holidays: {
-      regular: new Set(),
-      specialNonWorkingHoliday: new Set(),
-      specialWorkingHoliday: new Set(),
-    },
   });
   const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [selectedProject, setSelectedProject] = useState<string>('');
@@ -259,18 +251,9 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
 
     // @TODO: Handle start and end dates to have a valid payroll period
     setDates(getDatesInRange(start, end)); // Used to apply the dates for employee's data
-    setPayrollPeriod((prev) => [
-      ...prev,
-      {
-        startDate: start,
-        endDate: end,
-        holidays: {
-          regular: new Set(),
-          specialNonWorkingHoliday: new Set(),
-          specialWorkingHoliday: new Set(),
-        },
-      },
-    ]); // Used for displaying payroll period
+    setPayrollPeriod((prev) => [...prev, { startDate: start, endDate: end }]); // Used for displaying payroll period
+    setStartDate('');
+    setEndDate('');
   }
 
   function getDatesInRange(start: Date, end: Date): string[] {
@@ -400,46 +383,6 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     [projectData]
   );
 
-  const handleCreatePayrollPeriod = (startDate: Date, endDate: Date, holidays: Holidays): void => {
-    // Validate dates
-    if (!startDate || !endDate) {
-      toast.error('Please select both start and end dates');
-      return;
-    }
-
-    // Validate date range
-    if (endDate < startDate) {
-      toast.error('End date cannot be before start date');
-      return;
-    }
-
-    // Create new period with holidays
-    const newPeriod: PayrollPeriod = {
-      startDate,
-      endDate,
-      holidays: {
-        regular: new Set(holidays.regular.dates),
-        specialNonWorkingHoliday: new Set(holidays.specialNonWorkingHoliday.dates),
-        specialWorkingHoliday: new Set(holidays.specialWorkingHoliday.dates),
-      },
-    };
-
-    // Add to existing periods
-    setPayrollPeriod((prev) => [...prev, newPeriod]);
-
-    // Reset form state
-    setStartDate('');
-    setEndDate('');
-    setDates([]);
-    setHolidays({
-      regular: { dates: new Set() },
-      specialNonWorkingHoliday: { dates: new Set() },
-      specialWorkingHoliday: { dates: new Set() },
-    });
-
-    toast.success('Payroll period created successfully');
-  };
-
   return (
     <TimeTrackerContext.Provider
       value={{
@@ -466,11 +409,9 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         setStartDate,
         setEndDate,
         payrollPeriod,
-        setPayrollPeriod,
-        dates,
-        setDates,
 
         // Holidays
+        dates,
         holidays,
         setHolidays,
 
@@ -489,7 +430,6 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
         handleApplyDates,
         handlePaste,
         handleCopy,
-        handleCreatePayrollPeriod,
 
         projectData,
         employeeData,

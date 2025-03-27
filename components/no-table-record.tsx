@@ -20,7 +20,7 @@ interface NoTableRecordProps {
 export default function NoTableRecord({ title, description }: NoTableRecordProps) {
   return (
     <TableRow className='hover:bg-transparent'>
-      <TableCell colSpan={8} className='h-60 text-center'>
+      <TableCell colSpan={5} className='h-60 text-center'>
         <div className='flex flex-col gap-2'>
           <div className='self-center p-2 bg-gray-100 rounded-full'>
             <X size={24} className='text-gray-400' />
