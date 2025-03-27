@@ -65,7 +65,7 @@ type TimeTrackerType = {
   handleApplyDates: (startDate: string, endDate: string) => void;
   handlePaste: (event: React.ClipboardEvent<HTMLInputElement>) => void;
   handleCopy: (projectLocation: string, projectName: string) => void;
-  handleCreatePayrollPeriod: (startDate: Date, endDate: Date) => void;
+  handleCreatePayrollPeriod: (startDate: Date, endDate: Date, holidays: Holidays) => void;
 
   projectData: ProjectData;
   employeeData: EmployeeData[];
@@ -344,7 +344,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
     [projectData]
   );
 
-  const handleCreatePayrollPeriod = (startDate: Date, endDate: Date): void => {
+  const handleCreatePayrollPeriod = (startDate: Date, endDate: Date, holidays: Holidays): void => {
     // Validate dates
     if (!startDate || !endDate) {
       toast.error('Please select both start and end dates');

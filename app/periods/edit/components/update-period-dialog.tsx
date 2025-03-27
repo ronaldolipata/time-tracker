@@ -62,19 +62,19 @@ export default function UpdatePeriodDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Update Payroll Period</AlertDialogTitle>
-          <AlertDialogDescription>
-            <div className='space-y-2'>
-              <p>Are you sure you want to update this period?</p>
-              <div className='bg-gray-50 p-4 rounded-md'>
-                <p className='font-medium'>Changes to be made:</p>
-                <ul className='list-disc list-inside mt-1 space-y-1'>
-                  <li>Start date: {formatDate(startDate)}</li>
-                  <li>End date: {formatDate(endDate)}</li>
-                  <li>Holiday settings</li>
-                </ul>
-              </div>
+          <div className='space-y-6'>
+            <AlertDialogDescription>
+              Are you sure you want to update this period?
+            </AlertDialogDescription>
+            <div className='grid gap-1 bg-gray-50 p-6 text-sm rounded-md'>
+              <p className='font-medium'>Changes to be made:</p>
+              <ul className='grid gap-1 list-disc list-inside mt-1 space-y-1'>
+                <li>Start date: {formatDate(startDate)}</li>
+                <li>End date: {formatDate(endDate)}</li>
+                <li>Holiday settings</li>
+              </ul>
             </div>
-          </AlertDialogDescription>
+          </div>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className='cursor-pointer'>Cancel</AlertDialogCancel>

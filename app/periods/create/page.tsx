@@ -11,22 +11,43 @@ import { Button } from '@/components/ui/button';
 import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Holidays } from '@/context/types';
 
 export default function Create() {
-  const { startDate, endDate, setStartDate, setEndDate, handleCreatePayrollPeriod, setDates } =
-    useTimeTracker();
+  const {
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
+    handleCreatePayrollPeriod,
+    setDates,
+    setHolidays,
+  } = useTimeTracker();
   const router = useRouter();
+  const [tempHolidays, setTempHolidays] = useState<Holidays>({
+    regular: { dates: new Set() },
+    specialNonWorkingHoliday: { dates: new Set() },
+    specialWorkingHoliday: { dates: new Set() },
+  });
 
   function handleCreate(startDate: string, endDate: string) {
-    handleCreatePayrollPeriod(new Date(startDate), new Date(endDate));
+    setHolidays(tempHolidays);
+    handleCreatePayrollPeriod(new Date(startDate), new Date(endDate), tempHolidays);
     router.push(`/periods?success=${encodeURIComponent('Successfully created')}`);
   }
 
   function handleCreateAndCreateAnother(startDate: string, endDate: string) {
-    handleCreatePayrollPeriod(new Date(startDate), new Date(endDate));
+    setHolidays(tempHolidays);
+    handleCreatePayrollPeriod(new Date(startDate), new Date(endDate), tempHolidays);
     // The form is already cleared by handleCreatePayrollPeriod
-    // Just need to reset the dates array for the next period
+    // Just need to reset the dates array and tempHolidays for the next period
     setDates([]);
+    setTempHolidays({
+      regular: { dates: new Set() },
+      specialNonWorkingHoliday: { dates: new Set() },
+      specialWorkingHoliday: { dates: new Set() },
+    });
   }
 
   return (
@@ -69,7 +90,10 @@ export default function Create() {
               />
             </div>
             <div className='lg:col-span-2'>
-              <CollapsibleHolidaySelection />
+              <CollapsibleHolidaySelection
+                tempHolidays={tempHolidays}
+                setTempHolidays={setTempHolidays}
+              />
             </div>
           </div>
         </Card>

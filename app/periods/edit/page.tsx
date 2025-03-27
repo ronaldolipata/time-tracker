@@ -12,6 +12,7 @@ import UpdatePeriodDialog from './components/update-period-dialog';
 import { CustomLink } from '@/components/custom-link';
 import { DynamicBreadcrumbs } from '@/components/dynamic-breadcrumbs';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Holidays } from '@/context/types';
 
 export default function Edit() {
   const {
@@ -21,7 +22,6 @@ export default function Edit() {
     setEndDate,
     setPayrollPeriod,
     setHolidays,
-    holidays,
     payrollPeriod,
   } = useTimeTracker();
   const router = useRouter();
@@ -29,6 +29,11 @@ export default function Edit() {
   const start = searchParams.get('start');
   const end = searchParams.get('end');
   const [datesChanged, setDatesChanged] = useState(false);
+  const [tempHolidays, setTempHolidays] = useState<Holidays>({
+    regular: { dates: new Set<string>() },
+    specialNonWorkingHoliday: { dates: new Set<string>() },
+    specialWorkingHoliday: { dates: new Set<string>() },
+  });
 
   useEffect(() => {
     if (start && end) {
@@ -41,13 +46,17 @@ export default function Edit() {
       );
 
       if (periodToEdit) {
-        setHolidays({
-          regular: { dates: new Set(periodToEdit.holidays.regular) },
+        const initialHolidays: Holidays = {
+          regular: { dates: new Set<string>(periodToEdit.holidays.regular) },
           specialNonWorkingHoliday: {
-            dates: new Set(periodToEdit.holidays.specialNonWorkingHoliday),
+            dates: new Set<string>(periodToEdit.holidays.specialNonWorkingHoliday),
           },
-          specialWorkingHoliday: { dates: new Set(periodToEdit.holidays.specialWorkingHoliday) },
-        });
+          specialWorkingHoliday: {
+            dates: new Set<string>(periodToEdit.holidays.specialWorkingHoliday),
+          },
+        };
+        setHolidays(initialHolidays);
+        setTempHolidays(initialHolidays);
       }
     }
   }, [start, end, setStartDate, setEndDate, setHolidays, payrollPeriod]);
@@ -86,9 +95,11 @@ export default function Edit() {
             startDate: start,
             endDate: end,
             holidays: {
-              regular: new Set(holidays.regular.dates),
-              specialNonWorkingHoliday: new Set(holidays.specialNonWorkingHoliday.dates),
-              specialWorkingHoliday: new Set(holidays.specialWorkingHoliday.dates),
+              regular: new Set<string>(tempHolidays.regular.dates),
+              specialNonWorkingHoliday: new Set<string>(
+                tempHolidays.specialNonWorkingHoliday.dates
+              ),
+              specialWorkingHoliday: new Set<string>(tempHolidays.specialWorkingHoliday.dates),
             },
           };
         }
@@ -103,12 +114,14 @@ export default function Edit() {
   const handleDateChange = (date: string, setter: (date: string) => void) => {
     setter(date);
     setDatesChanged(true);
-    // Clear holidays in the context when dates change
-    setHolidays({
-      regular: { dates: new Set() },
-      specialNonWorkingHoliday: { dates: new Set() },
-      specialWorkingHoliday: { dates: new Set() },
-    });
+    // Clear holidays in the context and temp state when dates change
+    const emptyHolidays: Holidays = {
+      regular: { dates: new Set<string>() },
+      specialNonWorkingHoliday: { dates: new Set<string>() },
+      specialWorkingHoliday: { dates: new Set<string>() },
+    };
+    setHolidays(emptyHolidays);
+    setTempHolidays(emptyHolidays);
   };
 
   return (
@@ -151,7 +164,12 @@ export default function Edit() {
               />
             </div>
             <div className='lg:col-span-2'>
-              <CollapsibleHolidaySelection isEditMode={true} datesChanged={datesChanged} />
+              <CollapsibleHolidaySelection
+                isEditMode={true}
+                datesChanged={datesChanged}
+                tempHolidays={tempHolidays}
+                setTempHolidays={setTempHolidays}
+              />
             </div>
           </div>
         </Card>

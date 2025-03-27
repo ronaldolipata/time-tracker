@@ -22,26 +22,17 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 interface CollapsibleHolidaySelectionProps {
   isEditMode?: boolean;
   datesChanged?: boolean;
+  tempHolidays: Holidays;
+  setTempHolidays: React.Dispatch<React.SetStateAction<Holidays>>;
 }
 
 export default function CollapsibleHolidaySelection({
   isEditMode = false,
   datesChanged = false,
+  tempHolidays,
+  setTempHolidays,
 }: CollapsibleHolidaySelectionProps) {
-  const {
-    startDate,
-    endDate,
-    dates,
-    holidays,
-    setHolidays,
-    setDates,
-    setIsHolidaySelectionVisible,
-  } = useTimeTracker();
-  const [tempHolidays, setTempHolidays] = useState<Holidays>({
-    regular: { dates: new Set() },
-    specialNonWorkingHoliday: { dates: new Set() },
-    specialWorkingHoliday: { dates: new Set() },
-  });
+  const { startDate, endDate, dates, setDates } = useTimeTracker();
   const [isExpanded, setIsExpanded] = useState(false);
 
   function getDatesInRange(start: Date, end: Date): string[] {
@@ -62,15 +53,8 @@ export default function CollapsibleHolidaySelection({
       const end = new Date(endDate);
       const datesInRange = getDatesInRange(start, end);
       setDates(datesInRange);
-
-      // Initialize temporary holidays from the context
-      setTempHolidays({
-        regular: { dates: new Set(holidays.regular.dates) },
-        specialNonWorkingHoliday: { dates: new Set(holidays.specialNonWorkingHoliday.dates) },
-        specialWorkingHoliday: { dates: new Set(holidays.specialWorkingHoliday.dates) },
-      });
     }
-  }, [isExpanded, startDate, endDate, holidays, setDates]);
+  }, [isExpanded, startDate, endDate, setDates]);
 
   // Reset expanded state when dates change
   useEffect(() => {
@@ -80,11 +64,11 @@ export default function CollapsibleHolidaySelection({
   }, [datesChanged]);
 
   function handleHolidayCheckboxChange(date: string, type: keyof Holidays): void {
-    setTempHolidays((prev) => {
+    setTempHolidays((prev: Holidays) => {
       const updatedHolidays: Holidays = {
-        regular: { dates: new Set(prev.regular.dates) },
-        specialNonWorkingHoliday: { dates: new Set(prev.specialNonWorkingHoliday.dates) },
-        specialWorkingHoliday: { dates: new Set(prev.specialWorkingHoliday.dates) },
+        regular: { dates: new Set<string>(prev.regular.dates) },
+        specialNonWorkingHoliday: { dates: new Set<string>(prev.specialNonWorkingHoliday.dates) },
+        specialWorkingHoliday: { dates: new Set<string>(prev.specialWorkingHoliday.dates) },
       };
 
       // Toggle selection: If already present, remove it; otherwise, move it to the selected category
@@ -101,7 +85,7 @@ export default function CollapsibleHolidaySelection({
       }
 
       // Convert to sorted array, then back to Set
-      updatedHolidays[type].dates = new Set(
+      updatedHolidays[type].dates = new Set<string>(
         [...updatedHolidays[type].dates].sort(
           (a, b) => new Date(a).getTime() - new Date(b).getTime()
         )
@@ -109,12 +93,6 @@ export default function CollapsibleHolidaySelection({
 
       return updatedHolidays;
     });
-  }
-
-  function handleSave() {
-    setHolidays(tempHolidays);
-    setIsExpanded(false);
-    setIsHolidaySelectionVisible(true);
   }
 
   return (
@@ -182,11 +160,6 @@ export default function CollapsibleHolidaySelection({
                 ))}
               </TableBody>
             </Table>
-          </div>
-          <div className='flex justify-end'>
-            <Button className='cursor-pointer' onClick={handleSave}>
-              Save holidays
-            </Button>
           </div>
         </div>
       )}
