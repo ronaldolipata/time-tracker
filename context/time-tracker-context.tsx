@@ -209,12 +209,15 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       if (existingSiteIndex !== -1) {
         const existingSite = prev[existingSiteIndex];
 
+        // Find existing project for the specific project site and location
         const existingProject = existingSite.projects.find(
-          (project) => project.projectName.toLowerCase() === projectName.toLowerCase()
+          (project) =>
+            project.projectLocation.toLowerCase() === projectLocation.toLowerCase() &&
+            project.projectName.toLowerCase() === projectName.toLowerCase()
         );
 
         if (existingProject) {
-          toast.error('Name already exists for the site');
+          toast.error('Name already exists for the site and location');
           return prev; // No changes, return existing state
         }
 
@@ -427,7 +430,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       navigator.clipboard.writeText(data);
       toast.success(`Copied data to clipboard!`);
     },
-    [projectData, projectSite]
+    [projectData]
   );
 
   const handleCreatePayrollPeriod = (startDate: Date, endDate: Date, holidays: Holidays): void => {
