@@ -29,11 +29,13 @@ type TimeTrackerType = {
 
   // Selected data
   selectedPayrollPeriod: PayrollPeriod;
+  selectedSite: string;
   selectedLocation: string;
-  selectedProject: string;
+  selectedProjectName: string;
   setSelectedPayrollPeriod: Dispatch<SetStateAction<PayrollPeriod>>;
+  setSelectedSite: Dispatch<SetStateAction<string>>;
   setSelectedLocation: Dispatch<SetStateAction<string>>;
-  setSelectedProject: Dispatch<SetStateAction<string>>;
+  setSelectedProjectName: Dispatch<SetStateAction<string>>;
 
   // Payroll period
   startDate: string;
@@ -94,8 +96,9 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
       specialWorkingHoliday: new Set(),
     },
   });
+  const [selectedSite, setSelectedSite] = useState<string>('');
   const [selectedLocation, setSelectedLocation] = useState<string>('');
-  const [selectedProject, setSelectedProject] = useState<string>('');
+  const [selectedProjectName, setSelectedProjectName] = useState<string>('');
 
   const [projectData, setProjectData] = useState<ProjectData>([]);
 
@@ -363,7 +366,7 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
           return {
             ...data,
             projects: data.projects.map((project) => {
-              if (project.projectName === selectedProject) {
+              if (project.projectName === selectedProjectName) {
                 return {
                   ...project,
                   employeeData: newEmployeeData,
@@ -489,11 +492,13 @@ export const TimeTrackerProvider = ({ children }: { children: ReactNode }) => {
 
         // Selected data
         selectedPayrollPeriod,
+        selectedSite,
         selectedLocation,
-        selectedProject,
+        selectedProjectName,
         setSelectedPayrollPeriod,
+        setSelectedSite,
         setSelectedLocation,
-        setSelectedProject,
+        setSelectedProjectName,
 
         // Payroll period
         startDate,
