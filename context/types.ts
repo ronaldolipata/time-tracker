@@ -40,8 +40,9 @@ export type EmployeeData = {
 };
 
 export type ProjectData = {
-  projectLocation: string;
+  projectSite: string;
   projects: {
+    projectLocation: string;
     projectName: string;
     projectStatus: string;
     employeeData: EmployeeData[];

@@ -22,7 +22,7 @@ export default function NoTableRecord({ title, description }: NoTableRecordProps
     <TableRow className='hover:bg-transparent'>
       <TableCell colSpan={8} className='h-60 text-center'>
         <div className='flex flex-col gap-2'>
-          <div className='self-center p-2 bg-gray-100 rounded-full'>
+          <div className='self-center p-2 bg-muted/50 rounded-full'>
             <X size={24} className='text-gray-400' />
           </div>
           <div className='flex flex-col'>

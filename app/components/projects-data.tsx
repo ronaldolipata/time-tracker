@@ -14,11 +14,14 @@ import { Copy, X } from 'lucide-react';
 export default function ProjectsData() {
   const { projectData, handleCopy } = useTimeTracker();
 
-  const hasEmployeeData = (projectLocation: string, name: string) => {
-    const locationData = projectData.find((data) => data.projectLocation === projectLocation);
-    if (!locationData) return false;
+  const hasEmployeeData = (projectSite: string, projectLocation: string, projectName: string) => {
+    const siteData = projectData.find((data) => data.projectSite === projectSite);
+    if (!siteData) return false;
 
-    const project = locationData.projects.find((project) => project.projectName === name);
+    const project = siteData.projects.find(
+      (project) =>
+        project.projectLocation === projectLocation && project.projectName === projectName
+    );
     return project?.employeeData && project.employeeData.length > 0;
   };
 
@@ -27,12 +30,13 @@ export default function ProjectsData() {
       <Card className='w-full gap-5 p-5'>
         <div className='flex flex-col gap-2'>
           <CardTitle>Projects Data</CardTitle>
-          <CardDescription>Show data by project location and name</CardDescription>
+          <CardDescription>Show data by project site, location and name</CardDescription>
         </div>
         <div className='flex flex-col gap-4 rounded-md border'>
           <Table>
             <TableHeader>
               <TableRow className='bg-muted/50'>
+                <TableHead className='py-4 px-3 w-12'>Site</TableHead>
                 <TableHead className='py-4 px-3 w-12'>Location</TableHead>
                 <TableHead className='py-4 px-3 w-12'>Name</TableHead>
                 <TableHead className='py-4 px-3 w-12'>Action</TableHead>
@@ -40,19 +44,20 @@ export default function ProjectsData() {
             </TableHeader>
             <TableBody>
               {projectData.length > 0 ? (
-                projectData.flatMap(({ projectLocation, projects }) =>
-                  projects.map(({ projectName }, subIndex) => (
+                projectData.flatMap(({ projectSite, projects }) =>
+                  projects.map(({ projectLocation, projectName }, subIndex) => (
                     <TableRow
-                      key={`${projectLocation}-${projectName}`}
+                      key={`${projectSite}-${projectLocation}-${projectName}`}
                       className={subIndex % 2 === 0 ? '' : 'bg-muted/50'}
                     >
+                      <TableCell className='py-4 px-3'>{projectSite}</TableCell>
                       <TableCell className='py-4 px-3'>{projectLocation}</TableCell>
                       <TableCell className='py-4 px-3'>{projectName}</TableCell>
                       <TableCell className='p-2'>
                         <Button
                           className='p-0 cursor-pointer'
-                          onClick={() => handleCopy(projectLocation, projectName)}
-                          disabled={!hasEmployeeData(projectLocation, projectName)}
+                          onClick={() => handleCopy(projectSite, projectLocation, projectName)}
+                          disabled={!hasEmployeeData(projectSite, projectLocation, projectName)}
                         >
                           <Copy />
                         </Button>
